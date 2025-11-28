@@ -82,6 +82,55 @@
         @keyframes moveCloud { 0% { transform: translateX(110vw); } 100% { transform: translateX(-20vw); } }
         @keyframes sunFloat { 0% { transform: translateY(0); } 100% { transform: translateY(-10px); } }
 
+        /* --- CINEMATIC INTRO STYLES --- */
+        #cinematic-overlay {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background-color: #000; z-index: 9999;
+            display: flex; align-items: center; justify-content: center;
+            overflow: hidden;
+        }
+        
+        .lightning-flash {
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            background-color: #FFF; opacity: 0; pointer-events: none;
+        }
+
+        /* Enderman Run Animation */
+        .intro-enderman {
+            position: relative; width: 120px; height: 200px;
+            transform-origin: center bottom;
+            animation: runToCamera 3s ease-in forwards;
+        }
+        
+        @keyframes runToCamera {
+            0% { transform: scale(0.2) translateY(50px); opacity: 0; }
+            10% { opacity: 1; }
+            100% { transform: scale(8) translateY(20px); } /* Zoom in massively */
+        }
+
+        @keyframes flashLightning {
+            0%, 10%, 25%, 100% { opacity: 0; }
+            5%, 20% { opacity: 0.8; } /* Flash bursts */
+            15% { opacity: 0.3; }
+        }
+
+        @keyframes aggressiveShake {
+            0% { transform: rotate(0deg); }
+            25% { transform: rotate(5deg); }
+            75% { transform: rotate(-5deg); }
+            100% { transform: rotate(0deg); }
+        }
+
+        .anim-running .arm-l { animation: runArm 0.3s infinite alternate !important; }
+        .anim-running .arm-r { animation: runArm 0.3s infinite alternate-reverse !important; }
+        .anim-running .leg-l { animation: runLeg 0.3s infinite alternate !important; }
+        .anim-running .leg-r { animation: runLeg 0.3s infinite alternate-reverse !important; }
+        .anim-running .ender-head { animation: aggressiveShake 0.5s infinite !important; }
+
+        @keyframes runArm { from { transform: rotate(45deg); } to { transform: rotate(-45deg); } }
+        @keyframes runLeg { from { transform: translateY(-5px); } to { transform: translateY(5px); } }
+
+
         /* --- UI Overlay --- */
         .ui-layer {
             position: relative; z-index: 10; width: 100%; height: 100%;
@@ -156,7 +205,7 @@
         .theme-wood { background-color: #8F6942; border: 1px solid #5C4033; background-image: linear-gradient(0deg, rgba(0,0,0,0.1) 50%, transparent 50%); background-size: 4px 4px;}
         .empty-cell { background-color: #222; opacity: 0.5; }
 
-        /* Enderman */
+        /* Enderman Base Styles */
         .enderman-scene { position: relative; width: 120px; height: 200px; margin: 0 auto 20px; }
         .ender-head { width: 40px; height: 35px; background: #000; position: absolute; top: 0; left: 40px; z-index: 10; animation: floatHead 4s ease-in-out infinite; }
         .ender-eye { width: 10px; height: 4px; background: #D57DFF; position: absolute; top: 18px; box-shadow: 0 0 5px #D57DFF; }
@@ -179,10 +228,35 @@
 </head>
 <body>
 
-    <!-- Audio Player -->
+    <!-- Sounds -->
     <audio id="bg-music" loop>
         <source src="https://upload.wikimedia.org/wikipedia/commons/c/c4/Gymnopedie_No_1.ogg" type="audio/ogg">
     </audio>
+    <audio id="sfx-thunder" preload="auto">
+        <source src="https://upload.wikimedia.org/wikipedia/commons/e/e0/Thunder_sound_effect.ogg" type="audio/ogg">
+    </audio>
+
+    <!-- CINEMATIC INTRO OVERLAY -->
+    <div id="cinematic-overlay" class="z-[100]">
+        <div id="start-btn-container" class="absolute z-50 text-center">
+            <h1 class="text-6xl text-white mb-8 font-bold" style="text-shadow: 4px 4px #AA0000;">⚠️ אזהרה</h1>
+            <button onclick="playIntro()" class="btn-mc btn-obsidian text-3xl p-8 border-purple-500 animate-pulse">
+                לחץ להפעלת המערכת
+            </button>
+        </div>
+        
+        <div id="intro-animation" class="hidden w-full h-full relative flex items-center justify-center">
+            <div class="lightning-flash"></div>
+            
+            <!-- Custom Enderman for Intro -->
+            <div class="intro-enderman anim-running">
+                <div class="ender-head"><div class="ender-eye eye-l" style="background:#FFF; box-shadow:0 0 10px #FFF"></div><div class="ender-eye eye-r" style="background:#FFF; box-shadow:0 0 10px #FFF"></div></div>
+                <div class="ender-body"></div>
+                <div class="ender-arm arm-l"></div><div class="ender-arm arm-r"></div>
+                <div class="ender-leg leg-l"></div><div class="ender-leg leg-r"></div>
+            </div>
+        </div>
+    </div>
 
     <!-- 3D WORLD LAYER -->
     <div id="world-layer">
@@ -195,7 +269,7 @@
 
     <!-- UI LAYER -->
     <div class="ui-layer">
-        <div class="mc-gui-container">
+        <div class="mc-gui-container hidden" id="main-interface">
             
             <!-- Top Bar -->
             <div class="flex flex-wrap justify-between items-center mb-4 border-b-2 border-gray-500 pb-2 gap-2">
@@ -221,7 +295,7 @@
 
             <!-- VIEWS -->
 
-            <!-- 0. Intro View -->
+            <!-- 0. Intro View (Menu) -->
             <div id="intro-view" class="view flex flex-col items-center justify-center py-10">
                 <div class="enderman-scene">
                     <div class="ender-head"><div class="ender-eye eye-l"></div><div class="ender-eye eye-r"></div></div>
@@ -233,7 +307,7 @@
                 </div>
 
                 <h1 class="text-4xl font-bold mb-8 text-purple-800" style="text-shadow: 2px 2px #FFF;">האתגר של האנדרמן</h1>
-                <p class="mb-6 text-gray-700 font-bold">השלם את المשימות כדי לבנות פורטל!</p>
+                <p class="mb-6 text-gray-700 font-bold">השלם את המשימות כדי לבנות פורטל!</p>
                 <button onclick="startGame()" class="btn-mc btn-grass text-2xl px-12 py-4 shadow-lg">התחל משחק ▶</button>
             </div>
 
@@ -406,6 +480,28 @@
         const MUSIC = document.getElementById('bg-music');
         let musicPlaying = false;
 
+        // --- Intro Logic ---
+        function playIntro() {
+            document.getElementById('start-btn-container').classList.add('hidden');
+            const intro = document.getElementById('intro-animation');
+            intro.classList.remove('hidden');
+            
+            // Play Thunder
+            const thunder = document.getElementById('sfx-thunder');
+            thunder.volume = 0.8;
+            thunder.play().catch(e=>console.log("Audio requires interaction"));
+            
+            // Add Flash effect via CSS logic or just standard animation
+            const flash = document.querySelector('.lightning-flash');
+            flash.style.animation = "flashLightning 3s forwards";
+
+            // End animation after 3s
+            setTimeout(() => {
+                document.getElementById('cinematic-overlay').classList.add('hidden');
+                document.getElementById('main-interface').classList.remove('hidden');
+            }, 3000);
+        }
+
         window.toggleMusic = () => {
             if(musicPlaying) { MUSIC.pause(); document.getElementById('music-btn').textContent="🎵 נגן"; }
             else { MUSIC.play().catch(e=>console.log(e)); document.getElementById('music-btn').textContent="🔇 השתק"; }
@@ -445,19 +541,15 @@
 
         window.startReview = () => {
             if (gameState.errors.length === 0) return;
-            // Capture errors for this session
             const questionsToReview = [...gameState.errors];
-            
             gameState.history = [];
-            gameState.errors = []; // Reset errors to capture new ones during review
+            gameState.errors = []; 
             gameState.historyIndex = -1;
             gameState.isReview = true;
             
-            // Populate history with the review questions
             questionsToReview.forEach(q => {
                 gameState.history.push({ data: q, solved: false, tries: 0 });
             });
-            
             showView('game-view');
             window.nextQ();
         };
@@ -478,7 +570,6 @@
                 document.getElementById('retake-section').classList.remove('hidden');
                 
                 gameState.errors.forEach(q => { 
-                    // Determine display answer
                     let ansDisplay = q.ans || `${q.n}/${q.d}`;
                     if(q.type === 'M_WORD') ansDisplay = `${q.ansN}/${q.ansD}`;
                     tbody.innerHTML += `<tr><td>${q.q}</td><td dir="ltr" class="text-right">${ansDisplay}</td></tr>`; 
@@ -487,20 +578,13 @@
         };
 
         window.nextQ = () => {
-            // Check if we can move forward in history
             if(gameState.historyIndex < gameState.history.length - 1) { 
                 gameState.historyIndex++; 
                 renderQ(); 
             } 
-            // Review Mode End
-            else if (gameState.isReview) {
+            else if (gameState.isReview || gameState.history.length >= MAX_QUESTIONS) {
                 exitMission();
             }
-            // Normal Mode End (Limit Reached)
-            else if (gameState.history.length >= MAX_QUESTIONS) {
-                exitMission();
-            }
-            // Normal Mode Continue (Generate New)
             else { 
                 generateQ(); 
             }
@@ -509,7 +593,7 @@
 
         window.prevQ = () => { if(gameState.historyIndex > 0) { gameState.historyIndex--; renderQ(); resetFeedback(); } };
         window.skipQ = () => { 
-            if(gameState.isReview) window.nextQ(); // Just skip to next in review
+            if(gameState.isReview) window.nextQ();
             else { generateQ(); resetFeedback(); }
         }
 
@@ -526,11 +610,9 @@
         function updateUI() {
             document.getElementById('score-display').textContent = gameState.score;
             document.getElementById('diamonds-display').textContent = gameState.diamonds;
-            
             const current = gameState.historyIndex + 1;
             const total = gameState.isReview ? gameState.history.length : MAX_QUESTIONS;
             document.getElementById('q-num').textContent = `${current} / ${total}`;
-            
             document.getElementById('mission-title').textContent = gameState.isReview ? "מבחן חוזר ♻️" : "משימה";
         }
 
@@ -747,7 +829,6 @@
                 item.tries++;
                 fb.innerHTML = "אופס! נסה שוב 🧟";
                 fb.className = "mt-4 p-4 border-2 border-white text-center font-bold text-xl bg-red-800 text-white";
-                // Only push to errors if it's the first failed attempt, and push the WHOLE question object
                 if(item.tries === 1) gameState.errors.push(q);
             }
         };
