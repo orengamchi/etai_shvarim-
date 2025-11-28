@@ -1,0 +1,627 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>אתגר המהנדס: שברים ומילים ⛏️</title>
+    
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        /* --- פונטים --- */
+        @font-face {
+            font-family: 'Minecraft';
+            src: url('https://raw.githubusercontent.com/TiagoVignatti/Minecraft-Font/master/minecraft_font.ttf') format('truetype');
+        }
+
+        body {
+            font-family: 'Minecraft', 'Courier New', monospace; 
+            background-color: #111; 
+            /* Minecraft Dirt Background Darkened */
+            background-image: 
+                repeating-linear-gradient(135deg, #3A2E22 0%, #3A2E22 8px, #2D2218 8px, #2D2218 16px);
+            background-size: 32px 32px;
+            color: #FFF; 
+            direction: rtl;
+            text-align: right;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow-x: hidden;
+            image-rendering: pixelated;
+        }
+
+        /* --- GUI Styles (Classic Minecraft) --- */
+        .mc-gui-container {
+            background-color: #C6C6C6; /* Classic GUI Grey */
+            border: 4px solid #000;
+            box-shadow: 
+                inset 4px 4px 0 #FFF, 
+                inset -4px -4px 0 #555;
+            padding: 12px;
+            color: #3F3F3F; 
+            width: 100%;
+            max-width: 900px;
+            position: relative;
+        }
+
+        .mc-slot {
+            background-color: #8B8B8B;
+            border-right: 2px solid #FFF;
+            border-bottom: 2px solid #FFF;
+            border-left: 2px solid #373737;
+            border-top: 2px solid #373737;
+            padding: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: inset 2px 2px 0 #000;
+        }
+
+        /* Buttons - Minecraft Style with Colors */
+        .btn-mc {
+            border: 2px solid #000;
+            box-shadow: 
+                inset 2px 2px 0 rgba(255,255,255,0.4), 
+                inset -2px -2px 0 rgba(0,0,0,0.4);
+            color: #FFF;
+            text-shadow: 2px 2px 0 #000;
+            font-weight: bold;
+            padding: 10px 20px;
+            cursor: pointer;
+            text-align: center;
+            transition: transform 0.1s;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+        .btn-mc:active {
+            transform: translateY(2px);
+            box-shadow: inset 2px 2px 0 rgba(0,0,0,0.4);
+        }
+        .btn-mc:disabled {
+            background-color: #555 !important;
+            color: #888;
+            cursor: not-allowed;
+            filter: grayscale(100%);
+        }
+
+        /* Color Palette */
+        .btn-stone { background-color: #757575; color: #FFF; }
+        .btn-grass { background-color: #4A8F28; } /* Green */
+        .btn-diamond { background-color: #3C8DAB; } /* Cyan */
+        .btn-gold { background-color: #F0A804; color: #000; text-shadow: none; } /* Gold */
+        .btn-redstone { background-color: #AA0000; } /* Red */
+        .btn-obsidian { background-color: #141019; border-color: #633196; } /* Purple/Black */
+        .btn-wood { background-color: #8F6942; } /* Brown */
+
+        /* Input Fields */
+        .mc-input {
+            background-color: #222;
+            color: #FFF;
+            border: 2px solid #555;
+            padding: 8px;
+            font-family: inherit;
+            text-align: center;
+            font-size: 1.5rem;
+            box-shadow: inset 2px 2px 0 #000;
+        }
+        .mc-input:focus {
+            border-color: #FFF;
+            outline: none;
+            background-color: #000;
+        }
+
+        /* Typography inside GUI */
+        h1, h2, h3 {
+            color: #3F3F3F;
+            text-shadow: 2px 2px 0 #FFF;
+        }
+        
+        /* Question Box */
+        .question-box {
+            background-color: #4A4A4A;
+            border: 3px solid #222;
+            padding: 15px;
+            margin-bottom: 20px;
+            color: #FFF;
+            text-align: center;
+            font-size: 1.3rem;
+            text-shadow: 2px 2px 0 #000;
+            box-shadow: inset 0 0 10px #000;
+        }
+
+        /* Enderman Animation CSS */
+        .enderman-scene {
+            position: relative;
+            width: 120px;
+            height: 200px;
+            margin: 0 auto 20px;
+        }
+        .ender-head {
+            width: 40px; height: 35px;
+            background: #000;
+            position: absolute;
+            top: 0; left: 40px;
+            z-index: 10;
+            animation: floatHead 4s ease-in-out infinite;
+        }
+        .ender-eye {
+            width: 10px; height: 4px;
+            background: #D57DFF; /* Purple */
+            position: absolute;
+            top: 18px;
+            box-shadow: 0 0 5px #D57DFF;
+        }
+        .eye-l { left: 4px; }
+        .eye-r { right: 4px; }
+        .ender-body {
+            width: 26px; height: 70px;
+            background: #000;
+            position: absolute;
+            top: 35px; left: 47px;
+            z-index: 5;
+        }
+        .ender-arm {
+            width: 6px; height: 110px;
+            background: #000;
+            position: absolute;
+            top: 38px;
+            transform-origin: top center;
+        }
+        .arm-l { left: 38px; transform: rotate(3deg); animation: swayArm 3s infinite alternate; }
+        .arm-r { right: 38px; transform: rotate(-3deg); animation: swayArm 3s infinite alternate-reverse; }
+        .ender-leg {
+            width: 6px; height: 100px;
+            background: #000;
+            position: absolute;
+            top: 100px;
+        }
+        .leg-l { left: 48px; }
+        .leg-r { right: 48px; }
+        
+        .particle {
+            width: 6px; height: 6px;
+            background: #D57DFF;
+            position: absolute;
+            opacity: 0;
+            animation: portal 2s infinite;
+        }
+
+        @keyframes floatHead { 0%,100%{top:0;} 50%{top:-3px;} }
+        @keyframes swayArm { 0%{transform:rotate(3deg);} 100%{transform:rotate(-3deg);} }
+        @keyframes portal { 
+            0% {transform:translate(0,0) scale(1); opacity:1;} 
+            100% {transform:translate(var(--tx), var(--ty)) scale(0); opacity:0;} 
+        }
+
+        /* Utility */
+        .hidden { display: none !important; }
+        
+        /* Visual Helpers */
+        .fraction-display { font-size: 3rem; color: #FFF; text-shadow: 2px 2px 0 #000; }
+        .fraction-divider { height: 4px; background: #FFF; margin: 5px 0; box-shadow: 1px 1px 0 #000; }
+        
+        .grid-bar { display: flex; height: 40px; border: 3px solid #000; background: #555; }
+        .grid-cell { flex: 1; border-left: 1px solid #222; }
+        .grid-cell:first-child { border-left: none; }
+        .filled { background-color: #4A8F28; box-shadow: inset 2px 2px rgba(255,255,255,0.3); }
+
+    </style>
+</head>
+<body class="p-4">
+
+    <!-- Audio Player -->
+    <audio id="bg-music" loop>
+        <source src="https://upload.wikimedia.org/wikipedia/commons/c/c4/Gymnopedie_No_1.ogg" type="audio/ogg">
+    </audio>
+
+    <div class="mc-gui-container">
+        
+        <!-- Top Bar -->
+        <div class="flex flex-wrap justify-between items-center mb-4 border-b-2 border-gray-500 pb-2 gap-2">
+            <div class="flex gap-2">
+                <button onclick="showHome()" class="btn-mc btn-redstone" title="חזרה למסך הראשי">🏠 בית</button>
+                <button id="music-btn" onclick="toggleMusic()" class="btn-mc btn-stone">🎵 נגן</button>
+            </div>
+            
+            <div class="flex gap-4 bg-gray-800 px-4 py-2 border-2 border-white rounded text-white">
+                <span>⭐ ניקוד: <span id="score-display" class="text-yellow-400">0</span></span>
+                <span>💎 יהלומים: <span id="diamonds-display" class="text-cyan-400">0</span></span>
+            </div>
+            
+            <div>
+                 <select id="difficulty-select" class="mc-input text-sm p-1" onchange="changeDifficulty()">
+                    <option value="easy">🌲 קל (עץ)</option>
+                    <option value="medium" selected>⛏️ בינוני (אבן)</option>
+                    <option value="hard">🗡️ קשה (ברזל)</option>
+                </select>
+            </div>
+        </div>
+
+        <!-- VIEWS -->
+
+        <!-- 0. Intro View -->
+        <div id="intro-view" class="view flex flex-col items-center justify-center py-10">
+            
+            <!-- Animated Enderman -->
+            <div class="enderman-scene">
+                <div class="ender-head"><div class="ender-eye eye-l"></div><div class="ender-eye eye-r"></div></div>
+                <div class="ender-body"></div>
+                <div class="ender-arm arm-l"></div><div class="ender-arm arm-r"></div>
+                <div class="ender-leg leg-l"></div><div class="ender-leg leg-r"></div>
+                <!-- Particles -->
+                <div class="particle" style="top:50%; left:20%; --tx: -20px; --ty: -20px;"></div>
+                <div class="particle" style="top:30%; right:20%; --tx: 20px; --ty: -30px; animation-delay: 0.5s;"></div>
+            </div>
+
+            <h1 class="text-4xl font-bold mb-8 text-purple-800" style="text-shadow: 2px 2px #FFF;">האתגר של האנדרמן</h1>
+            <button onclick="startGame()" class="btn-mc btn-grass text-2xl px-12 py-4 shadow-lg">התחל משחק ▶</button>
+        </div>
+
+        <!-- 1. Subject Selection -->
+        <div id="subject-menu-view" class="view hidden text-center">
+            <h2 class="text-2xl mb-8">בחר את המכרה שלך:</h2>
+            <div class="flex flex-col sm:flex-row justify-center gap-6">
+                <button onclick="showView('math-menu-view')" class="btn-mc btn-wood text-xl p-8 w-64 flex flex-col items-center gap-2">
+                    <span class="text-4xl">🔢</span>
+                    <span>עולם השברים</span>
+                </button>
+                <button onclick="showView('english-menu-view')" class="btn-mc btn-diamond text-xl p-8 w-64 flex flex-col items-center gap-2 text-black" style="text-shadow:none">
+                    <span class="text-4xl">📜</span>
+                    <span>עולם המילים</span>
+                </button>
+            </div>
+            <div class="mt-8">
+                <button onclick="showTips()" class="btn-mc btn-obsidian text-purple-300 border-purple-500">💡 ספר הכשפים (טיפים)</button>
+            </div>
+        </div>
+
+        <!-- 2. Math Menu -->
+        <div id="math-menu-view" class="view hidden">
+            <h2 class="text-2xl mb-4 text-center">משימות כרייה (חשבון):</h2>
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                <button onclick="startMission(1)" class="btn-mc btn-stone text-lg text-right px-4">1. 🌲 סוד השלם</button>
+                <button onclick="startMission(2)" class="btn-mc btn-stone text-lg text-right px-4">2. 🗿 מיון בלוקים</button>
+                <button onclick="startMission(3)" class="btn-mc btn-stone text-lg text-right px-4">3. 🧱 בלוקים תאומים</button>
+                <button onclick="startMission(4)" class="btn-mc btn-stone text-lg text-right px-4">4. ⚖️ מאזני הכוח</button>
+                <button onclick="startMission(5)" class="btn-mc btn-gold text-lg text-right px-4">5. 🍲 השף המתמטי</button>
+            </div>
+            <div class="text-center mt-6">
+                <button onclick="showView('subject-menu-view')" class="btn-mc btn-red">חזרה</button>
+            </div>
+        </div>
+
+        <!-- 3. English Menu -->
+        <div id="english-menu-view" class="view hidden">
+            <h2 class="text-2xl mb-4 text-center">משימות שפה (אנגלית):</h2>
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                <button onclick="startMission(101)" class="btn-mc btn-stone text-lg text-right px-4">E1. 🏷️ מיון משאבים</button>
+                <button onclick="startMission(102)" class="btn-mc btn-stone text-lg text-right px-4">E2. ✅ בורות (To Be)</button>
+                <button onclick="startMission(103)" class="btn-mc btn-stone text-lg text-right px-4">E3. 🧭 מפת הסיפור</button>
+            </div>
+            <div class="text-center mt-6">
+                <button onclick="showView('subject-menu-view')" class="btn-mc btn-red">חזרה</button>
+            </div>
+        </div>
+
+        <!-- 4. Game Arena -->
+        <div id="game-view" class="view hidden">
+            <div class="flex justify-between items-center mb-4">
+                <h3 id="mission-title" class="text-xl font-bold text-gray-700">משימה</h3>
+                <span class="text-gray-600 font-bold">שאלה <span id="q-num">1</span></span>
+            </div>
+
+            <!-- Question Box -->
+            <div class="question-box">
+                <p id="question-text">השאלה תופיע כאן...</p>
+            </div>
+
+            <!-- Interactive Area -->
+            <div id="game-content" class="mb-6 min-h-[150px] flex flex-col items-center justify-center gap-4">
+                <!-- Dynamic Content -->
+            </div>
+
+            <!-- Controls -->
+            <div class="flex justify-center gap-4 flex-wrap mt-4">
+                <button onclick="prevQ()" class="btn-mc btn-stone">⬅️ הקודם</button>
+                <button onclick="checkAnswer()" id="check-btn" class="btn-mc btn-grass text-xl px-8">בדוק! ⛏️</button>
+                <button onclick="skipQ()" id="skip-btn" class="btn-mc btn-gold">דלג ⏩</button>
+            </div>
+
+            <!-- Feedback -->
+            <div id="feedback" class="hidden mt-4 p-4 border-2 border-white text-center font-bold text-xl" style="background:#333;"></div>
+        </div>
+
+        <!-- 5. Summary -->
+        <div id="summary-view" class="view hidden text-center p-8">
+            <h2 class="text-4xl mb-6 text-green-600" style="text-shadow: 2px 2px #FFF">סיום כרייה!</h2>
+            <div class="bg-gray-300 border-4 border-black p-6 mb-6 inline-block">
+                <p class="text-2xl text-black">ניקוד סופי: <span id="final-score">0</span></p>
+                <p class="text-2xl text-black">יהלומים: <span id="final-diamonds">0</span> 💎</p>
+            </div>
+            
+            <div class="text-right mb-6">
+                <h3 class="text-xl mb-2 text-gray-700">יומן חפירות (טעויות):</h3>
+                <div class="bg-gray-800 border-2 border-white p-2 h-48 overflow-y-auto">
+                    <table class="w-full text-sm text-white">
+                        <thead><tr class="border-b border-gray-600"><th>שאלה</th><th>תשובה נכונה</th></tr></thead>
+                        <tbody id="error-log-body"></tbody>
+                    </table>
+                    <p id="no-errors-text" class="hidden text-center text-green-400 mt-4">אין תקלות! עבודה מושלמת!</p>
+                </div>
+            </div>
+            
+            <button onclick="showHome()" class="btn-mc btn-wood w-full py-3">חזרה למחנה 🏠</button>
+        </div>
+
+    </div>
+
+    <!-- Tips Modal -->
+    <div id="tips-modal" class="hidden fixed inset-0 bg-black bg-opacity-90 flex items-center justify-center z-50">
+        <div class="bg-gray-300 border-4 border-black p-6 max-w-md w-full relative text-black">
+            <button onclick="hideTips()" class="absolute top-2 left-2 font-bold text-red-600 text-xl">X</button>
+            <h3 class="text-2xl font-bold text-center mb-4">טיפים למהנדס</h3>
+            <ul class="list-disc pr-6 space-y-2 text-lg">
+                <li><strong>סבלנות:</strong> כמו בחציבת אובסידיאן, אל תמהר.</li>
+                <li><strong>כלים:</strong> השתמש בדף ועיפרון אם צריך.</li>
+                <li><strong>שקט:</strong> בנה קירות נגד רעש מסביבך.</li>
+                <li><strong>מפה:</strong> השתמש בציורים של המשחק להבנה.</li>
+            </ul>
+        </div>
+    </div>
+
+    <script>
+        // --- Game Logic ---
+        let gameState = {
+            score: 0,
+            diamonds: 0,
+            difficulty: 'medium',
+            missionId: 0,
+            history: [],
+            historyIndex: -1,
+            errors: []
+        };
+
+        const MUSIC = document.getElementById('bg-music');
+        let musicPlaying = false;
+
+        // --- Globals for window access ---
+        window.toggleMusic = () => {
+            if(musicPlaying) { MUSIC.pause(); document.getElementById('music-btn').textContent="🎵 נגן"; }
+            else { MUSIC.play().catch(e=>console.log(e)); document.getElementById('music-btn').textContent="🔇 השתק"; }
+            musicPlaying = !musicPlaying;
+        };
+
+        window.showHome = () => {
+            showView('intro-view');
+            gameState = { score: 0, diamonds: 0, difficulty: 'medium', missionId: 0, history: [], historyIndex: -1, errors: [] };
+            updateUI();
+        };
+
+        window.startGame = () => {
+            if(!musicPlaying) toggleMusic();
+            showView('subject-menu-view');
+        };
+
+        window.showView = (id) => {
+            document.querySelectorAll('.view').forEach(v => v.classList.add('hidden'));
+            document.getElementById(id).classList.remove('hidden');
+        };
+
+        window.showMathMenu = () => showView('math-menu-view');
+        window.showEnglishMenu = () => showView('english-menu-view');
+        window.showTips = () => document.getElementById('tips-modal').classList.remove('hidden');
+        window.hideTips = () => document.getElementById('tips-modal').classList.add('hidden');
+        window.showFocusTipsModal = window.showTips; // Alias
+        window.hideFocusTipsModal = window.hideTips; // Alias
+
+        window.changeDifficulty = () => {
+            gameState.difficulty = document.getElementById('difficulty-select').value;
+        };
+
+        window.startMission = (id) => {
+            gameState.missionId = id;
+            gameState.history = [];
+            gameState.historyIndex = -1;
+            showView('game-view');
+            nextQ(); // Start first question
+        };
+
+        window.exitMission = () => {
+            showView('summary-view');
+            document.getElementById('final-score').textContent = gameState.score;
+            document.getElementById('final-diamonds').textContent = gameState.diamonds;
+            
+            const tbody = document.getElementById('error-log-body');
+            tbody.innerHTML = '';
+            if(gameState.errors.length === 0) {
+                document.getElementById('no-errors-text').classList.remove('hidden');
+            } else {
+                document.getElementById('no-errors-text').classList.add('hidden');
+                gameState.errors.forEach(err => {
+                    tbody.innerHTML += `<tr><td>${err.q}</td><td dir="ltr" class="text-right">${err.a}</td></tr>`;
+                });
+            }
+        };
+
+        // --- Question Logic ---
+        window.nextQ = () => {
+            if(gameState.historyIndex < gameState.history.length - 1) {
+                gameState.historyIndex++;
+                renderQ();
+            } else {
+                generateQ();
+            }
+            resetFeedback();
+        };
+
+        window.prevQ = () => {
+            if(gameState.historyIndex > 0) {
+                gameState.historyIndex--;
+                renderQ();
+                resetFeedback();
+            }
+        };
+        
+        window.skipQ = () => {
+            // Mark current as skipped if needed, then gen new
+            generateQ();
+            resetFeedback();
+        }
+
+        function resetFeedback() {
+            const fb = document.getElementById('feedback');
+            fb.classList.add('hidden');
+            fb.className = 'hidden mt-4 p-4 border-2 border-white text-center font-bold text-xl';
+            document.getElementById('check-btn').disabled = false;
+            
+            const curr = gameState.history[gameState.historyIndex];
+            if(curr && curr.solved) {
+                document.getElementById('check-btn').disabled = true;
+                fb.innerHTML = "כבר נפתר!";
+                fb.classList.remove('hidden');
+                fb.style.backgroundColor = "#333";
+                fb.style.color = "#FFF";
+            }
+        }
+
+        function updateUI() {
+            document.getElementById('score-display').textContent = gameState.score;
+            document.getElementById('diamonds-display').textContent = gameState.diamonds;
+            document.getElementById('q-num').textContent = gameState.historyIndex + 1;
+        }
+
+        // --- Generators ---
+        const MAX_DENOM = { easy: 5, medium: 10, hard: 20 };
+        
+        function generateQ() {
+            const diff = gameState.difficulty;
+            const max = MAX_DENOM[diff];
+            let qData = {};
+
+            // Math Logic
+            if(gameState.missionId === 1) { // Identify
+                const d = Math.floor(Math.random() * (max-2)) + 3;
+                const n = Math.floor(Math.random() * (d-1)) + 1;
+                qData = { type: 'M_ID', q: `בנה שבר: ${n} מתוך ${d} בלוקים.`, n, d };
+            } else if(gameState.missionId === 2) { // Sort
+                const n = Math.floor(Math.random() * max) + 1;
+                const d = Math.floor(Math.random() * max) + 1;
+                const type = n < d ? 'small' : 'big';
+                qData = { type: 'M_SORT', q: `הבלוק ${n}/${d}: קטן מ-1 או גדול/שווה?`, ans: type, n, d };
+            } else if(gameState.missionId === 3) { // Equivalent
+                const d = Math.floor(Math.random() * (max/2)) + 2;
+                const n = Math.floor(Math.random() * (d-1)) + 1;
+                qData = { type: 'M_EQ', q: `מצא תאום ל- ${n}/${d}`, n, d };
+            } else if(gameState.missionId === 4) { // Compare
+                qData = { type: 'M_CMP', q: "מי כבד יותר?", n1:1, d1:2, n2:1, d2:4, ans:'>' }; // Simplified
+            } else if(gameState.missionId === 5) { // Word
+                qData = { type: 'M_WORD', q: "לפוצץ שטח של 10 בלוקים. כל TNT מפוצץ 2. כמה TNT?", ansN:5, ansD:1 };
+            } 
+            // English Logic
+            else if(gameState.missionId === 101) { // Sort
+                qData = { type: 'E_SORT', q: "מיין: Apple", ans: "noun" };
+            } else if(gameState.missionId === 102) { // ToBe
+                qData = { type: 'E_TOBE', q: "I ___ happy", ans: "am" };
+            } else if(gameState.missionId === 103) { // Story
+                qData = { type: 'E_READ', q: "Who is Steve? (Miner)", ans: "miner" };
+            }
+
+            gameState.history.push({ data: qData, solved: false, tries: 0 });
+            gameState.historyIndex = gameState.history.length - 1;
+            renderQ();
+            updateUI();
+        }
+
+        function renderQ() {
+            const q = gameState.history[gameState.historyIndex].data;
+            const box = document.getElementById('game-content');
+            document.getElementById('question-text').textContent = q.q;
+            box.innerHTML = '';
+
+            if(q.type === 'M_ID' || q.type === 'M_EQ' || q.type === 'M_WORD') {
+                box.innerHTML = `
+                    <div class="mc-slot flex flex-col items-center bg-gray-800 p-4">
+                        <input id="in-n" type="number" class="mc-input w-24 mb-2" placeholder="מונה">
+                        <div class="fraction-divider w-24"></div>
+                        <input id="in-d" type="number" class="mc-input w-24 mt-2" placeholder="מכנה">
+                    </div>
+                    ${q.type === 'M_ID' ? `<div id="visual-bar" class="grid-bar w-64 mt-4"></div>` : ''}
+                `;
+                if(q.type === 'M_ID') drawBar(q.n, q.d);
+            } 
+            else if(q.type === 'M_SORT') {
+                box.innerHTML = `
+                    <div class="text-4xl text-white mb-4 font-bold">${q.n}/${q.d}</div>
+                    <div class="flex gap-4">
+                        <button onclick="check('small')" class="btn-mc btn-stone">קטן מ-1</button>
+                        <button onclick="check('big')" class="btn-mc btn-stone">גדול/שווה ל-1</button>
+                    </div>
+                `;
+                document.getElementById('check-btn').style.display = 'none';
+            }
+            else if(q.type.startsWith('E')) {
+                 box.innerHTML = `<input id="in-text" type="text" class="mc-input w-64" placeholder="תשובה...">`;
+            }
+            
+            if(!q.type.includes('SORT')) document.getElementById('check-btn').style.display = 'inline-block';
+        }
+
+        function drawBar(n, d) {
+            setTimeout(() => {
+                const el = document.getElementById('visual-bar');
+                if(!el) return;
+                el.innerHTML = '';
+                for(let i=0; i<d; i++) {
+                    const cell = document.createElement('div');
+                    cell.className = 'grid-cell' + (i<n ? ' filled' : '');
+                    el.appendChild(cell);
+                }
+            }, 0);
+        }
+
+        window.checkAnswer = check = (val) => {
+            const item = gameState.history[gameState.historyIndex];
+            if(item.solved) return;
+            
+            const q = item.data;
+            let correct = false;
+
+            if(q.type === 'M_ID' || q.type === 'M_EQ' || q.type === 'M_WORD') {
+                const n = parseInt(document.getElementById('in-n').value);
+                const d = parseInt(document.getElementById('in-d').value);
+                // Simplified check logic (In real app, use simplification)
+                if (q.type === 'M_ID') correct = (n === q.n && d === q.d);
+                else if (q.type === 'M_EQ') correct = (n/d === q.n/q.d && n !== q.n);
+                else correct = (n === q.ansN && d === q.ansD);
+            } else if (q.type === 'M_SORT') {
+                correct = (val === q.ans);
+            } else {
+                const t = document.getElementById('in-text').value.toLowerCase();
+                correct = t.includes(q.ans.toLowerCase());
+            }
+
+            const fb = document.getElementById('feedback');
+            fb.classList.remove('hidden');
+            
+            if(correct) {
+                gameState.score += 10;
+                gameState.diamonds++;
+                item.solved = true;
+                updateUI();
+                fb.innerHTML = "נכון מאוד! 💎";
+                fb.style.backgroundColor = "#4A8F28"; // Green
+                document.getElementById('check-btn').disabled = true;
+            } else {
+                item.tries++;
+                fb.innerHTML = "לא מדויק. נסה שוב.";
+                fb.style.backgroundColor = "#AA0000"; // Red
+                if(item.tries === 1) gameState.errors.push({q: q.q, a: "תשובה נכונה", missionId: gameState.missionId});
+            }
+        };
+
+    </script>
+</body>
+</html>
