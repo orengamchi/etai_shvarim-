@@ -14,7 +14,7 @@
         }
         @font-face {
             font-family: 'Impact';
-            src: local('Impact'), local('Impact-Regular'), url(https://fonts.gstatic.com/l/font?kit=__impact_kit_placeholder__); /* Fallback if needed */
+            src: local('Impact'), local('Impact-Regular'), url(https://fonts.gstatic.com/l/font?kit=__impact_kit_placeholder__);
         }
 
         /* --- Global Reset & Body --- */
@@ -34,120 +34,76 @@
             image-rendering: pixelated;
             background-color: #87CEEB; 
             transition: background-color 5s ease;
-            /* Mobile Tweaks */
             -webkit-tap-highlight-color: transparent;
             touch-action: manipulation;
         }
 
         /* --- 3D WORLD BACKGROUND & ENVIRONMENT --- */
         #world-layer {
-            position: absolute;
-            top: 0; left: 0; width: 100%; height: 100%;
-            z-index: 0;
-            perspective: 600px;
-            overflow: hidden;
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            z-index: 0; perspective: 600px; overflow: hidden;
             background: linear-gradient(to bottom, #87CEEB 0%, #C8EAFF 60%, #E0F7FA 100%);
-            transition: background 5s ease;
+            transition: background 30s ease-in-out; /* מעבר ארוך */
         }
 
-        /* Night Mode Styles */
-        #world-layer.night {
-            background: linear-gradient(to bottom, #000033 0%, #191970 60%, #483D8B 100%);
-        }
-        #world-layer.storm {
-            background: linear-gradient(to bottom, #2C3E50 0%, #4A5866 100%);
-        }
+        #world-layer.night { background: linear-gradient(to bottom, #000033 0%, #191970 60%, #483D8B 100%); }
+        #world-layer.storm { background: linear-gradient(to bottom, #2C3E50 0%, #4A5866 100%); }
 
         /* Celestial Bodies */
         .sun {
-            position: absolute;
-            top: 10%; left: 10%; width: 60px; height: 60px; /* Smaller on mobile base */
-            background-color: #FFF500;
-            box-shadow: 4px 4px 0 rgba(0,0,0,0.1);
-            z-index: 1;
-            transition: top 5s ease, left 5s ease, opacity 2s ease;
+            position: absolute; top: 10%; left: 10%; width: 60px; height: 60px;
+            background-color: #FFF500; box-shadow: 4px 4px 0 rgba(0,0,0,0.1);
+            z-index: 1; transition: top 30s ease-in-out, left 30s ease-in-out, opacity 5s ease; /* מעבר ארוך */
         }
         @media (min-width: 768px) { .sun { width: 80px; height: 80px; } }
         
         .moon {
-            position: absolute;
-            top: 110%; left: 80%; width: 50px; height: 50px;
-            background-color: #F4F6F0;
-            box-shadow: 0 0 10px rgba(255,255,255,0.5);
-            z-index: 1;
-            transition: top 5s ease, opacity 2s ease;
+            position: absolute; top: 110%; left: 80%; width: 50px; height: 50px;
+            background-color: #F4F6F0; box-shadow: 0 0 10px rgba(255,255,255,0.5);
+            z-index: 1; transition: top 30s ease-in-out, opacity 5s ease; /* מעבר ארוך */
         }
         @media (min-width: 768px) { .moon { width: 60px; height: 60px; } }
-        
-        .moon::after {
-            content: ''; position: absolute; top: 8px; left: 8px; width: 8px; height: 8px; background: #DDD; opacity: 0.5;
-        }
+        .moon::after { content: ''; position: absolute; top: 8px; left: 8px; width: 8px; height: 8px; background: #DDD; opacity: 0.5; }
 
         .star {
-            position: absolute;
-            width: 3px; height: 3px;
-            background: white;
-            opacity: 0;
-            transition: opacity 3s ease;
+            position: absolute; width: 3px; height: 3px; background: white; opacity: 0;
+            transition: opacity 5s ease; /* מעבר ארוך */
         }
         #world-layer.night .star { opacity: 0.8; animation: twinkle 2s infinite alternate; }
-
         @keyframes twinkle { 0% { opacity: 0.3; } 100% { opacity: 1; } }
 
         /* Weather: Rain */
         .rain-drop {
-            position: absolute;
-            width: 2px; height: 15px;
-            background: rgba(200, 200, 255, 0.6);
-            top: -20px;
-            z-index: 5;
-            animation: fall 0.5s linear infinite;
-            display: none;
+            position: absolute; width: 2px; height: 15px; background: rgba(200, 200, 255, 0.6);
+            top: -20px; z-index: 5; animation: fall 0.5s linear infinite; display: none;
         }
         #world-layer.raining .rain-drop { display: block; }
-
         @keyframes fall { to { transform: translateY(105vh); } }
 
         .cloud {
-            position: absolute;
-            background-color: rgba(255,255,255,0.8);
-            width: 100px; height: 30px;
-            z-index: 2;
+            position: absolute; background-color: rgba(255,255,255,0.8);
+            width: 100px; height: 30px; z-index: 2;
             box-shadow: 6px 6px 0 rgba(0,0,0,0.05);
-            animation: moveCloud linear infinite;
-            transition: background-color 3s;
+            animation: moveCloud linear infinite; transition: background-color 5s; /* מעבר ארוך */
         }
         #world-layer.storm .cloud { background-color: #555; box-shadow: 4px 4px 0 #222; }
-        
         .cloud::after {
             content: ''; position: absolute; top: -15px; left: 15px;
             width: 70px; height: 15px; background-color: inherit;
         }
 
         .ground-plane {
-            position: absolute;
-            bottom: -200px;
-            left: -100%;
-            width: 300%;
-            height: 100%;
+            position: absolute; bottom: -200px; left: -100%; width: 300%; height: 100%;
             background-color: #5C9338;
-            background-image: 
-                linear-gradient(rgba(0,0,0,0.1) 2px, transparent 2px),
-                linear-gradient(90deg, rgba(0,0,0,0.1) 2px, transparent 2px);
-            background-size: 40px 40px; /* Smaller grid on mobile */
-            transform: rotateX(60deg) translateZ(-50px);
-            transform-origin: 50% 100%;
-            z-index: 3;
-            animation: moveGround 4s linear infinite;
+            background-image: linear-gradient(rgba(0,0,0,0.1) 2px, transparent 2px), linear-gradient(90deg, rgba(0,0,0,0.1) 2px, transparent 2px);
+            background-size: 40px 40px;
+            transform: rotateX(60deg) translateZ(-50px); transform-origin: 50% 100%;
+            z-index: 3; animation: moveGround 4s linear infinite;
             box-shadow: inset 0 100px 100px rgba(135, 206, 235, 0.5);
-            transition: box-shadow 5s ease, background-color 5s ease;
+            transition: box-shadow 30s ease-in-out, background-color 30s ease-in-out; /* מעבר ארוך */
         }
         @media (min-width: 768px) { .ground-plane { background-size: 60px 60px; } }
-
-        #world-layer.night .ground-plane { 
-            background-color: #2E4B1C; 
-            box-shadow: inset 0 100px 100px rgba(0, 0, 50, 0.8);
-        }
+        #world-layer.night .ground-plane { background-color: #2E4B1C; box-shadow: inset 0 100px 100px rgba(0, 0, 50, 0.8); }
 
         @keyframes moveGround { 0% { background-position: 0 0; } 100% { background-position: 0 60px; } }
         @keyframes moveCloud { 0% { transform: translateX(110vw); } 100% { transform: translateX(-20vw); } }
@@ -157,29 +113,20 @@
         #scenery-layer {
             position: absolute; top: 0; left: 0; width: 100%; height: 100%;
             pointer-events: none; z-index: 4;
-            transform-style: preserve-3d;
-            perspective: 600px;
-            overflow: hidden;
+            transform-style: preserve-3d; perspective: 600px; overflow: hidden;
         }
-        
         .tower-stack {
-            position: absolute;
-            display: flex;
-            flex-direction: column-reverse;
-            align-items: center;
-            transform-origin: center bottom;
+            position: absolute; display: flex; flex-direction: column-reverse;
+            align-items: center; transform-origin: center bottom;
             animation: moveTower 10s linear infinite;
         }
-        
         .tower-block {
-            width: 30px; height: 30px; /* Smaller on mobile */
+            width: 30px; height: 30px;
             background-image: url('https://static.wikia.nocookie.net/minecraft_gamepedia/images/c/c5/Grass_Block_JE7_BE6.png');
-            background-size: cover;
-            image-rendering: pixelated;
+            background-size: cover; image-rendering: pixelated;
             box-shadow: 2px 2px 5px rgba(0,0,0,0.3);
         }
         @media (min-width: 768px) { .tower-block { width: 50px; height: 50px; } }
-
         @keyframes moveTower {
             0% { top: 40%; opacity: 0; transform: scale(0.2); }
             10% { opacity: 1; }
@@ -191,46 +138,33 @@
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             background-color: #000; z-index: 9999;
             display: flex; align-items: center; justify-content: center;
-            overflow: hidden;
-            flex-direction: column;
+            overflow: hidden; flex-direction: column;
         }
-        
         .lightning-flash {
             position: absolute; top: 0; left: 0; width: 100%; height: 100%;
-            background-color: #FFF; opacity: 0; pointer-events: none;
-            z-index: 100;
+            background-color: #FFF; opacity: 0; pointer-events: none; z-index: 100;
         }
 
-        /* --- ENDERMAN ANIMATION (SILHOUETTE) --- */
+        /* Silhouette Enderman */
         .intro-enderman {
-            position: relative; width: 80px; height: 130px; /* Smaller start for mobile */
-            transform-origin: center bottom;
-            opacity: 0; 
-            z-index: 101;
+            position: relative; width: 80px; height: 130px;
+            transform-origin: center bottom; opacity: 0; z-index: 101;
         }
         @media (min-width: 768px) { .intro-enderman { width: 120px; height: 200px; } }
         
-        .intro-enderman .ender-head,
-        .intro-enderman .ender-body,
-        .intro-enderman .ender-arm,
-        .intro-enderman .ender-leg {
-            background-color: #000 !important;
-            box-shadow: 0 0 5px rgba(0,0,0,0.5);
+        .intro-enderman .ender-head, .intro-enderman .ender-body,
+        .intro-enderman .ender-arm, .intro-enderman .ender-leg {
+            background-color: #000 !important; box-shadow: 0 0 5px rgba(0,0,0,0.5);
         }
-
         .intro-enderman .ender-eye {
-            background: #D57DFF !important;
-            box-shadow: 0 0 15px #D57DFF, 0 0 5px #FFF !important;
+            background: #D57DFF !important; box-shadow: 0 0 15px #D57DFF, 0 0 5px #FFF !important;
         }
-
-        .intro-running {
-            animation: runToCamera 3s ease-in forwards;
-        }
+        .intro-running { animation: runToCamera 3s ease-in forwards; }
 
         @keyframes runToCamera {
             0% { transform: scale(0.2) translateY(50px); opacity: 0; }
             5% { opacity: 1; }
-            100% { transform: scale(8) translateY(40px); opacity: 1; } /* Reduced max scale for mobile */
+            100% { transform: scale(8) translateY(40px); opacity: 1; }
         }
         @media (min-width: 768px) {
             @keyframes runToCamera {
@@ -241,72 +175,35 @@
         }
 
         @keyframes flashLightning {
-            0% { opacity: 0; }
-            2% { opacity: 1; }
-            4% { opacity: 0; }
-            6% { opacity: 0.5; }
-            8% { opacity: 0; }
-            20% { opacity: 0; }
-            22% { opacity: 0.8; }
-            24% { opacity: 0; }
-            50% { opacity: 0; }
-            52% { opacity: 1; }
-            54% { opacity: 0.2; }
-            56% { opacity: 0; }
-            80% { opacity: 0; }
-            82% { opacity: 0.6; }
-            84% { opacity: 0; }
-            100% { opacity: 0; }
+            0% { opacity: 0; } 2% { opacity: 1; } 4% { opacity: 0; } 6% { opacity: 0.5; }
+            8% { opacity: 0; } 20% { opacity: 0; } 22% { opacity: 0.8; } 24% { opacity: 0; }
+            50% { opacity: 0; } 52% { opacity: 1; } 54% { opacity: 0.2; } 56% { opacity: 0; }
+            80% { opacity: 0; } 82% { opacity: 0.6; } 84% { opacity: 0; } 100% { opacity: 0; }
         }
-
         @keyframes aggressiveShake {
-            0% { transform: rotate(0deg); }
-            25% { transform: rotate(5deg); }
-            75% { transform: rotate(-5deg); }
-            100% { transform: rotate(0deg); }
+            0% { transform: rotate(0deg); } 25% { transform: rotate(5deg); } 75% { transform: rotate(-5deg); } 100% { transform: rotate(0deg); }
         }
-
         .anim-running .arm-l { animation: runArm 0.3s infinite alternate !important; }
         .anim-running .arm-r { animation: runArm 0.3s infinite alternate-reverse !important; }
         .anim-running .leg-l { animation: runLeg 0.3s infinite alternate !important; }
         .anim-running .leg-r { animation: runLeg 0.3s infinite alternate-reverse !important; }
         .anim-running .ender-head { animation: aggressiveShake 0.5s infinite !important; }
-
         @keyframes runArm { from { transform: rotate(45deg); } to { transform: rotate(-45deg); } }
         @keyframes runLeg { from { transform: translateY(-5px); } to { transform: translateY(5px); } }
 
-        /* --- FLASHING 3D TITLE STYLES --- */
         .mega-title {
-            font-size: 4rem; /* Mobile size */
-            line-height: 1;
-            text-align: center;
-            font-weight: 900; 
-            color: #FFD700;
-            font-family: 'Impact', 'Arial Black', sans-serif;
-            letter-spacing: 2px;
-            -webkit-text-stroke: 2px #000;
-            text-shadow: 
-                0 1px 0 #c6a300,
-                0 2px 0 #c6a300,
-                0 3px 0 #c6a300,
-                0 4px 0 #000,
-                5px 5px 10px rgba(0,0,0,0.5);
-            animation: flashColors 0.3s infinite alternate;
-            transform: perspective(500px) rotateX(15deg);
-            max-width: 90vw;
+            font-size: 4rem; line-height: 1; text-align: center; font-weight: 900; 
+            color: #FFD700; font-family: 'Impact', 'Arial Black', sans-serif;
+            letter-spacing: 2px; -webkit-text-stroke: 2px #000;
+            text-shadow: 0 1px 0 #c6a300, 0 2px 0 #c6a300, 0 3px 0 #c6a300, 0 4px 0 #000, 5px 5px 10px rgba(0,0,0,0.5);
+            animation: flashColors 0.3s infinite alternate; transform: perspective(500px) rotateX(15deg); max-width: 90vw;
         }
         @media (min-width: 768px) {
             .mega-title {
-                font-size: 8rem;
-                letter-spacing: 4px;
-                -webkit-text-stroke: 4px #000;
-                text-shadow: 
-                    0 1px 0 #c6a300, 0 2px 0 #c6a300, 0 3px 0 #c6a300, 0 4px 0 #c6a300, 0 5px 0 #c6a300, 
-                    0 6px 0 #c6a300, 0 7px 0 #c6a300, 0 8px 0 #c6a300, 0 9px 0 #000, 0 10px 0 #000,
-                    10px 10px 20px rgba(0,0,0,0.5);
+                font-size: 8rem; letter-spacing: 4px; -webkit-text-stroke: 4px #000;
+                text-shadow: 0 1px 0 #c6a300, 0 2px 0 #c6a300, 0 3px 0 #c6a300, 0 4px 0 #c6a300, 0 5px 0 #c6a300, 0 6px 0 #c6a300, 0 7px 0 #c6a300, 0 8px 0 #c6a300, 0 9px 0 #000, 0 10px 0 #000, 10px 10px 20px rgba(0,0,0,0.5);
             }
         }
-
         @keyframes flashColors {
             0% { color: #FF0000; text-shadow: 0 4px 0 #8B0000; }
             25% { color: #00FF00; text-shadow: 0 4px 0 #006400; }
@@ -315,53 +212,28 @@
             100% { color: #FF00FF; text-shadow: 0 4px 0 #8B008B; }
         }
 
-        /* --- UI Overlay --- */
+        /* --- UI --- */
         .ui-layer {
             position: relative; z-index: 10; width: 100%; height: 100%;
-            display: flex; align-items: center; justify-content: center;
-            padding: 0.5rem; /* Reduced padding */
-            pointer-events: none;
+            display: flex; align-items: center; justify-content: center; padding: 0.5rem; pointer-events: none;
         }
-
-        /* --- GUI Styles --- */
         .mc-gui-container {
-            pointer-events: auto;
-            background-color: rgba(198, 198, 198, 0.95);
-            border: 4px solid #000;
-            box-shadow: inset 4px 4px 0 #FFF, inset -4px -4px 0 #555, 0 20px 50px rgba(0,0,0,0.5);
-            padding: 12px;
-            color: #3F3F3F; 
-            width: 95%; /* Mobile width */
-            max-width: 900px; 
-            max-height: 95vh; /* Max height for mobile */
-            overflow-y: auto; position: relative;
-            border-radius: 4px;
+            pointer-events: auto; background-color: rgba(198, 198, 198, 0.95);
+            border: 4px solid #000; box-shadow: inset 4px 4px 0 #FFF, inset -4px -4px 0 #555, 0 20px 50px rgba(0,0,0,0.5);
+            padding: 12px; color: #3F3F3F; width: 95%; max-width: 900px; max-height: 95vh; overflow-y: auto; position: relative; border-radius: 4px;
         }
-
         .mc-slot {
-            background-color: #8B8B8B;
-            border-right: 2px solid #FFF; border-bottom: 2px solid #FFF;
-            border-left: 2px solid #373737; border-top: 2px solid #373737;
-            padding: 8px; 
-            display: flex; align-items: center; justify-content: center;
-            box-shadow: inset 2px 2px 0 #000;
+            background-color: #8B8B8B; border-right: 2px solid #FFF; border-bottom: 2px solid #FFF;
+            border-left: 2px solid #373737; border-top: 2px solid #373737; padding: 8px; 
+            display: flex; align-items: center; justify-content: center; box-shadow: inset 2px 2px 0 #000;
         }
-
         .btn-mc {
-            border: 2px solid #000;
-            box-shadow: inset 2px 2px 0 rgba(255,255,255,0.4), inset -2px -2px 0 rgba(0,0,0,0.4);
-            color: #FFF; text-shadow: 2px 2px 0 #000; font-weight: bold;
-            padding: 12px 16px; /* Larger touch target */
-            cursor: pointer; text-align: center;
-            display: inline-flex; align-items: center; justify-content: center; gap: 6px;
-            font-size: 1rem;
-            touch-action: manipulation; /* Optimize for touch */
-            user-select: none;
+            border: 2px solid #000; box-shadow: inset 2px 2px 0 rgba(255,255,255,0.4), inset -2px -2px 0 rgba(0,0,0,0.4);
+            color: #FFF; text-shadow: 2px 2px 0 #000; font-weight: bold; padding: 12px 16px; cursor: pointer; text-align: center;
+            display: inline-flex; align-items: center; justify-content: center; gap: 6px; font-size: 1rem; touch-action: manipulation; user-select: none;
         }
         .btn-mc:active { transform: translateY(2px); box-shadow: inset 2px 2px 0 rgba(0,0,0,0.4); }
         .btn-mc:disabled { background-color: #555 !important; color: #888; cursor: not-allowed; filter: grayscale(100%); }
-
-        /* Button Colors */
         .btn-stone { background-color: #757575; color: #FFF; }
         .btn-grass { background-color: #4A8F28; }
         .btn-diamond { background-color: #3C8DAB; }
@@ -370,86 +242,43 @@
         .btn-obsidian { background-color: #141019; border-color: #633196; }
         .btn-wood { background-color: #8F6942; }
         .btn-command { background-color: #C77E4F; border-color: #965F37; } 
-
         .mc-input {
-            background-color: #222; color: #FFF; border: 2px solid #555;
-            padding: 8px; font-family: inherit; text-align: center; font-size: 16px; /* Prevents iOS zoom */
-            box-shadow: inset 2px 2px 0 #000;
+            background-color: #222; color: #FFF; border: 2px solid #555; padding: 8px; font-family: inherit; text-align: center; font-size: 16px; box-shadow: inset 2px 2px 0 #000;
         }
         .mc-input:focus { border-color: #FFF; background-color: #000; outline: none; }
-
         .question-box {
-            background-color: #4A4A4A; border: 3px solid #222; padding: 12px;
-            margin-bottom: 15px; color: #FFF; text-align: center; font-size: 1.1rem;
-            text-shadow: 2px 2px 0 #000; box-shadow: inset 0 0 10px #000;
-            width: 100%;
+            background-color: #4A4A4A; border: 3px solid #222; padding: 12px; margin-bottom: 15px; color: #FFF; text-align: center; font-size: 1.1rem;
+            text-shadow: 2px 2px 0 #000; box-shadow: inset 0 0 10px #000; width: 100%;
         }
         @media (min-width: 768px) { .question-box { font-size: 1.3rem; padding: 15px; } }
 
-        /* --- VISUAL AIDS (BLOCKS) --- */
         .block-row {
-            display: flex; gap: 4px; justify-content: center; align-items: flex-end;
-            background: rgba(0,0,0,0.2);
-            padding: 10px;
-            border-radius: 4px;
-            border: 2px solid rgba(0,0,0,0.5);
-            min-height: 50px;
-            flex-wrap: wrap; /* Allow wrap on small screens */
+            display: flex; gap: 4px; justify-content: center; align-items: flex-end; background: rgba(0,0,0,0.2); padding: 10px;
+            border-radius: 4px; border: 2px solid rgba(0,0,0,0.5); min-height: 50px; flex-wrap: wrap;
         }
-        
         .mc-block-img {
-            width: 32px; height: 32px; /* Mobile size */
-            image-rendering: pixelated;
-            filter: drop-shadow(2px 2px 0px rgba(0,0,0,0.5));
-            transition: transform 0.2s;
+            width: 32px; height: 32px; image-rendering: pixelated; filter: drop-shadow(2px 2px 0px rgba(0,0,0,0.5)); transition: transform 0.2s;
         }
         @media (min-width: 768px) { .mc-block-img { width: 48px; height: 48px; filter: drop-shadow(4px 4px 0px rgba(0,0,0,0.5)); } }
-
         .mc-block-img:hover { transform: translateY(-5px); }
-        .mc-block-ghost {
-            opacity: 0.3;
-            filter: grayscale(100%) brightness(0.5);
-        }
-        
+        .mc-block-ghost { opacity: 0.3; filter: grayscale(100%) brightness(0.5); }
         .pie-chart {
-            width: 80px; height: 80px;
-            border-radius: 50%;
-            border: 4px solid #5C4033; /* Wood border */
-            background-color: #222;
-            position: relative;
-            box-shadow: 2px 2px 5px rgba(0,0,0,0.5);
+            width: 80px; height: 80px; border-radius: 50%; border: 4px solid #5C4033; background-color: #222; position: relative; box-shadow: 2px 2px 5px rgba(0,0,0,0.5);
         }
         @media (min-width: 768px) { .pie-chart { width: 100px; height: 100px; } }
-        
-        /* Themes Colors for JS injection */
-        :root {
-            --color-grass: #4A8F28;
-            --color-stone: #7D7D7D;
-            --color-diamond: #3C8DAB;
-            --color-gold: #F0A804;
-            --color-iron: #E6E6E6;
-            --color-tnt: #DB2E23;
-            --color-wood: #8F6942;
-            --color-emerald: #17DD62;
-            --color-coal: #333;
-            --color-cake: #FFF;
-        }
 
-        /* Fill in Blank Styles */
-        .filled-answer {
-            display: inline-block;
-            padding: 0 4px;
-            border-bottom-width: 3px;
-            font-weight: bold;
-            transition: all 0.3s ease;
+        :root {
+            --color-grass: #4A8F28; --color-stone: #7D7D7D; --color-diamond: #3C8DAB; --color-gold: #F0A804;
+            --color-iron: #E6E6E6; --color-tnt: #DB2E23; --color-wood: #8F6942; --color-emerald: #17DD62;
+            --color-coal: #333; --color-cake: #FFF;
         }
+        .filled-answer { display: inline-block; padding: 0 4px; border-bottom-width: 3px; font-weight: bold; transition: all 0.3s ease; }
         .filled-correct { color: #4ade80; border-color: #4ade80; }
         .filled-wrong { color: #fb923c; border-color: #fb923c; }
 
-        /* Enderman Base Styles */
+        /* Enderman Styles */
         .enderman-scene { position: relative; width: 80px; height: 130px; margin: 0 auto 10px; }
         @media (min-width: 768px) { .enderman-scene { width: 120px; height: 200px; margin: 0 auto 20px; } }
-
         .ender-head { width: 33%; height: 17.5%; background: #000; position: absolute; top: 0; left: 33%; z-index: 10; animation: floatHead 4s ease-in-out infinite; }
         .ender-eye { width: 25%; height: 11%; background: #D57DFF; position: absolute; top: 50%; box-shadow: 0 0 5px #D57DFF; }
         .eye-l { left: 10%; } .eye-r { right: 10%; }
@@ -460,75 +289,30 @@
         .ender-leg { width: 5%; height: 50%; background: #000; position: absolute; top: 50%; }
         .leg-l { left: 40%; } .leg-r { right: 40%; }
         .particle { width: 4px; height: 4px; background: #D57DFF; position: absolute; opacity: 0; animation: portal 2s infinite; }
-        
         @keyframes floatHead { 0%,100%{top:0;} 50%{top:-3px;} }
         @keyframes swayArm { 0%{transform:rotate(3deg);} 100%{transform:rotate(-3deg);} }
         @keyframes portal { 0% {transform:translate(0,0) scale(1); opacity:1;} 100% {transform:translate(var(--tx), var(--ty)) scale(0); opacity:0;} }
 
         .hidden { display: none !important; }
         .fraction-divider { height: 3px; background: #FFF; margin: 4px 0; box-shadow: 1px 1px 0 #000; }
-
-        /* Icon Integration in Text */
-        .inline-icon {
-            display: inline-block;
-            vertical-align: middle;
-            width: 24px;
-            height: 24px;
-            margin: 0 2px;
-            filter: drop-shadow(2px 2px 0 rgba(0,0,0,0.5));
-        }
+        .inline-icon { display: inline-block; vertical-align: middle; width: 24px; height: 24px; margin: 0 2px; filter: drop-shadow(2px 2px 0 rgba(0,0,0,0.5)); }
         @media (min-width: 768px) { .inline-icon { width: 32px; height: 32px; margin: 0 4px; } }
 
-        /* Error Log Table Styles */
-        .log-table {
-            border-collapse: separate;
-            border-spacing: 0;
-            width: 100%;
-        }
-        .log-table th {
-            background-color: #2d2d2d;
-            border-bottom: 2px solid #555;
-            padding: 6px;
-            font-size: 0.9rem;
-        }
-        .log-table td {
-            padding: 6px;
-            border-bottom: 1px solid #444;
-            font-size: 0.9rem;
-        }
-        .log-table tr:nth-child(even) {
-            background-color: rgba(255, 255, 255, 0.05);
-        }
+        .log-table { border-collapse: separate; border-spacing: 0; width: 100%; }
+        .log-table th { background-color: #2d2d2d; border-bottom: 2px solid #555; padding: 6px; font-size: 0.9rem; }
+        .log-table td { padding: 6px; border-bottom: 1px solid #444; font-size: 0.9rem; }
+        .log-table tr:nth-child(even) { background-color: rgba(255, 255, 255, 0.05); }
         
-        /* Wizard / Spellbook Styles */
-        .wizard-section {
-            background-color: #3b2e25;
-            border: 2px solid #5e4b35;
-            padding: 10px;
-            margin-bottom: 10px;
-            border-radius: 4px;
-        }
-        .wizard-title {
-            color: #d1b588;
-            font-weight: bold;
-            font-size: 1.1rem;
-            margin-bottom: 5px;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-        .wizard-content {
-            color: #ddd;
-            font-size: 0.95rem;
-            line-height: 1.4;
-        }
+        .wizard-section { background-color: #3b2e25; border: 2px solid #5e4b35; padding: 10px; margin-bottom: 10px; border-radius: 4px; }
+        .wizard-title { color: #d1b588; font-weight: bold; font-size: 1.1rem; margin-bottom: 5px; display: flex; align-items: center; gap: 8px; }
+        .wizard-content { color: #ddd; font-size: 0.95rem; line-height: 1.4; }
     </style>
 </head>
 <body>
 
     <!-- Sounds -->
     <audio id="bg-music" loop>
-        <source src="https://upload.wikimedia.org/wikipedia/commons/c/c4/Gymnopedie_No_1.ogg" type="audio/ogg">
+        <source src="https://raw.githubusercontent.com/orengamchi/etai_shvarim-/main/%D7%90%D7%99%D7%AA%D7%99%20%D7%A9%D7%91%D7%A8%D7%99%D7%9D.mp3" type="audio/mpeg">
     </audio>
     <audio id="sfx-thunder" preload="auto">
         <source src="https://upload.wikimedia.org/wikipedia/commons/e/e0/Thunder_sound_effect.ogg" type="audio/ogg">
@@ -589,26 +373,23 @@
             
             <!-- Top Bar -->
             <div class="flex flex-col md:flex-row justify-between items-center mb-2 md:mb-4 border-b-2 border-gray-500 pb-2 gap-2">
-                
-                <!-- Control Buttons -->
-                <div class="flex flex-wrap justify-center gap-2 w-full md:w-auto">
-                    <button onclick="showHome()" class="btn-mc btn-redstone text-sm flex-1 md:flex-none" title="חזרה למסך הראשי">🏠</button>
-                    <button onclick="showAdminPanel()" class="btn-mc btn-command text-black text-sm flex-1 md:flex-none" title="העלאת שאלות">🖥️</button>
-                    <button id="music-btn" onclick="toggleMusic()" class="btn-mc btn-stone text-sm flex-1 md:flex-none">🎵</button>
-                    <button onclick="showContextualHelp()" class="btn-mc btn-obsidian text-purple-300 border-purple-500 p-2 flex-1 md:flex-none" title="ספר המכשף (עזרה)">
-                        <img src="https://static.wikia.nocookie.net/minecraft_gamepedia/images/7/7b/Book_JE2_BE2.png" width="20" height="20">
+                <div class="flex gap-2">
+                    <button onclick="showHome()" class="btn-mc btn-redstone" title="חזרה למסך הראשי">🏠 בית</button>
+                    <button onclick="showAdminPanel()" class="btn-mc btn-command text-black" title="העלאת שאלות">🖥️ Uploader</button>
+                    <button id="music-btn" onclick="toggleMusic()" class="btn-mc btn-stone">🎵 נגן</button>
+                    <!-- Spellbook Icon Button (Consistent on all pages) -->
+                    <button onclick="showContextualHelp()" class="btn-mc btn-obsidian text-purple-300 border-purple-500 p-2" title="ספר המכשף (עזרה)">
+                        <img src="https://static.wikia.nocookie.net/minecraft_gamepedia/images/7/7b/Book_JE2_BE2.png" width="24" height="24">
                     </button>
                 </div>
                 
-                <!-- Score Display -->
-                <div class="flex gap-4 bg-gray-800 px-3 py-1 border-2 border-white rounded text-white shadow-lg text-sm md:text-base w-full md:w-auto justify-center">
-                    <span class="border-l border-white pl-3 ml-1">⭐ <span id="score-display" class="text-yellow-400 font-bold">0</span></span>
-                    <span>💎 <span id="diamonds-display" class="text-cyan-400 font-bold">0</span></span>
+                <div class="flex gap-4 bg-gray-800 px-4 py-2 border-2 border-white rounded text-white shadow-lg">
+                    <span class="border-l border-white pl-4 ml-2">⭐ ציון כללי: <span id="score-display" class="text-yellow-400 font-bold text-xl">0</span></span>
+                    <span>💎 יהלומים: <span id="diamonds-display" class="text-cyan-400 font-bold text-xl">0</span></span>
                 </div>
                 
-                <!-- Difficulty -->
-                <div class="w-full md:w-auto text-center">
-                      <select id="difficulty-select" class="mc-input text-sm p-1 w-full md:w-auto" onchange="changeDifficulty()">
+                <div>
+                      <select id="difficulty-select" class="mc-input text-sm p-1" onchange="changeDifficulty()">
                         <option value="easy">🌲 קל</option>
                         <option value="medium" selected>⛏️ בינוני</option>
                         <option value="hard">🗡️ קשה</option>
@@ -629,116 +410,117 @@
                     <div class="particle" style="top:30%; right:20%; --tx: 20px; --ty: -30px; animation-delay: 0.5s;"></div>
                 </div>
 
-                <h1 class="text-3xl md:text-4xl font-bold mb-4 text-purple-800" style="text-shadow: 2px 2px #FFF;">האתגר של האנדרמן</h1>
-                <p class="mb-4 text-gray-700 font-bold text-sm md:text-base px-4">השלם את המשימות כדי לבנות פורטל!</p>
-                <button onclick="startGame()" class="btn-mc btn-grass text-xl md:text-2xl px-8 py-3 shadow-lg w-full max-w-xs">התחל משחק ▶</button>
+                <h1 class="text-4xl font-bold mb-8 text-purple-800" style="text-shadow: 2px 2px #FFF;">האתגר של האנדרמן</h1>
+                <p class="mb-6 text-gray-700 font-bold">השלם את המשימות כדי לבנות פורטל!</p>
+                <button onclick="startGame()" class="btn-mc btn-grass text-2xl px-12 py-4 shadow-lg">התחל משחק ▶</button>
             </div>
 
             <!-- 1. Subject Menu -->
             <div id="subject-menu-view" class="view hidden text-center h-full overflow-y-auto">
-                <h2 class="text-xl md:text-2xl mb-6 text-gray-800">בחר את המכרה שלך:</h2>
-                <div class="flex flex-col sm:flex-row justify-center gap-4 px-4">
-                    <button onclick="showView('math-menu-view')" class="btn-mc btn-wood text-lg p-6 w-full sm:w-64 flex flex-col items-center gap-2">
+                <h2 class="text-2xl mb-8 text-gray-800">בחר את המכרה שלך:</h2>
+                <div class="flex flex-col sm:flex-row justify-center gap-6">
+                    <button onclick="showView('math-menu-view')" class="btn-mc btn-wood text-xl p-8 w-64 flex flex-col items-center gap-2">
                         <span class="text-4xl">🔢</span>
                         <span>עולם השברים</span>
                     </button>
-                    <button onclick="showView('english-menu-view')" class="btn-mc btn-diamond text-lg p-6 w-full sm:w-64 flex flex-col items-center gap-2 text-black" style="text-shadow:none">
+                    <button onclick="showView('english-menu-view')" class="btn-mc btn-diamond text-xl p-8 w-64 flex flex-col items-center gap-2 text-black" style="text-shadow:none">
                         <span class="text-4xl">📜</span>
                         <span>עולם המילים</span>
                     </button>
                 </div>
-                <div class="mt-6 pb-4">
-                    <button onclick="showTips()" class="btn-mc btn-obsidian text-purple-300 border-purple-500 w-full max-w-xs">📖 ספר המכשף</button>
+                <div class="mt-8">
+                    <button onclick="showTips()" class="btn-mc btn-obsidian text-purple-300 border-purple-500">💡 ספר הכשפים (טיפים)</button>
                 </div>
             </div>
 
             <!-- 2. Math Menu -->
             <div id="math-menu-view" class="view hidden h-full overflow-y-auto pb-4">
-                <h2 class="text-xl md:text-2xl mb-4 text-center text-gray-800">משימות כרייה (חשבון):</h2>
-                <div class="grid grid-cols-1 gap-3 px-2">
-                    <button onclick="startMission(1)" class="btn-mc btn-stone text-base text-right px-4 py-3">1. 🌲 מלאי התיבה (זיהוי)</button>
-                    <button onclick="startMission(2)" class="btn-mc btn-stone text-base text-right px-4 py-3">2. 🗿 מיון בלוקים (סוגים)</button>
-                    <button onclick="startMission(3)" class="btn-mc btn-stone text-base text-right px-4 py-3">3. 🧱 שולחן היצירה (חיבור)</button>
-                    <button onclick="startMission(4)" class="btn-mc btn-stone text-base text-right px-4 py-3">4. ⚖️ מאזני הכוח (השוואה)</button>
-                    <button onclick="startMission(5)" class="btn-mc btn-gold text-base text-right px-4 py-3">5. 🍲 הכפר והמשק (מילוליות)</button>
+                <h2 class="text-2xl mb-4 text-center text-gray-800">משימות כרייה (חשבון):</h2>
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                    <button onclick="startMission(1)" class="btn-mc btn-stone text-lg text-right px-4">1. 🌲 מלאי התיבה (זיהוי)</button>
+                    <button onclick="startMission(2)" class="btn-mc btn-stone text-lg text-right px-4">2. 🗿 מיון בלוקים (סוגים)</button>
+                    <button onclick="startMission(3)" class="btn-mc btn-stone text-lg text-right px-4">3. 🧱 שולחן היצירה (חיבור)</button>
+                    <button onclick="startMission(4)" class="btn-mc btn-stone text-lg text-right px-4">4. ⚖️ מאזני הכוח (השוואה)</button>
+                    <button onclick="startMission(5)" class="btn-mc btn-gold text-lg text-right px-4">5. 🍲 הכפר והמשק (מילוליות)</button>
                 </div>
             </div>
 
             <!-- 3. English Menu -->
             <div id="english-menu-view" class="view hidden h-full overflow-y-auto pb-4">
-                <h2 class="text-xl md:text-2xl mb-4 text-center text-gray-800">משימות שפה (אנגלית):</h2>
-                <div class="grid grid-cols-1 gap-3 px-2">
-                    <button onclick="startMission(101)" class="btn-mc btn-stone text-base text-right px-4 py-3">E1. 🏷️ Inventory Sort (Vocab)</button>
-                    <button onclick="startMission(102)" class="btn-mc btn-stone text-base text-right px-4 py-3">E2. ✅ Steve's Actions (To Be)</button>
-                    <button onclick="startMission(103)" class="btn-mc btn-stone text-base text-right px-4 py-3">E3. 🧭 Steve's Journal (Reading)</button>
+                <h2 class="text-2xl mb-4 text-center text-gray-800">משימות שפה (אנגלית):</h2>
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                    <button onclick="startMission(101)" class="btn-mc btn-stone text-lg text-right px-4">E1. 🏷️ Inventory Sort (Vocab)</button>
+                    <button onclick="startMission(102)" class="btn-mc btn-stone text-lg text-right px-4">E2. ✅ Steve's Actions (To Be)</button>
+                    <button onclick="startMission(103)" class="btn-mc btn-stone text-lg text-right px-4">E3. 🧭 Steve's Journal (Reading)</button>
                 </div>
             </div>
 
             <!-- 4. Game Arena -->
             <div id="game-view" class="view hidden h-full flex flex-col">
-                <div class="flex justify-between items-center mb-2">
-                    <h3 id="mission-title" class="text-lg font-bold text-gray-700">משימה</h3>
+                <div class="flex justify-between items-center mb-4">
+                    <h3 id="mission-title" class="text-xl font-bold text-gray-700">משימה</h3>
                     <div class="flex gap-2 items-center">
-                        <span class="text-gray-600 font-bold text-sm">שאלה <span id="q-num">1</span></span>
+                        <span class="text-gray-600 font-bold">שאלה <span id="q-num">1</span></span>
                     </div>
                 </div>
 
                 <!-- Progress Bar -->
-                <div class="w-full mb-4 flex-shrink-0">
-                    <div class="w-full h-4 bg-gray-900 border-2 border-black relative overflow-hidden">
+                <div class="w-full mb-6">
+                    <div class="w-full h-6 bg-gray-900 border-2 border-black relative overflow-hidden">
                         <div id="progress-fill" class="h-full bg-green-500 transition-all duration-500 ease-out" style="width: 0%; box-shadow: inset 0 -2px 0 rgba(0,0,0,0.3);"></div>
                     </div>
                 </div>
 
-                <div class="question-box flex-shrink-0">
-                    <p id="question-text" class="leading-tight">השאלה תופיע כאן...</p>
+                <div class="question-box">
+                    <p id="question-text">השאלה תופיע כאן...</p>
                 </div>
 
-                <div id="game-content" class="flex-grow flex flex-col items-center justify-center gap-4 overflow-y-auto py-2 w-full">
+                <div id="game-content" class="mb-6 min-h-[150px] flex flex-col items-center justify-center gap-4">
                     <!-- Dynamic Content -->
                 </div>
 
-                <div class="flex justify-center gap-2 flex-wrap mt-2 flex-shrink-0 pb-2">
-                    <button onclick="prevQ()" class="btn-mc btn-stone flex-1 min-w-[80px] text-sm">⬅️</button>
-                    <button onclick="checkAnswer()" id="check-btn" class="btn-mc btn-grass text-lg px-4 flex-[2]">בדוק! ⛏️</button>
-                    <button onclick="skipQ()" id="skip-btn" class="btn-mc btn-gold flex-1 min-w-[80px] text-sm">דלג ⏩</button>
+                <div class="flex justify-center gap-4 flex-wrap mt-4">
+                    <button onclick="prevQ()" class="btn-mc btn-stone">⬅️ הקודם</button>
+                    <button onclick="checkAnswer()" id="check-btn" class="btn-mc btn-grass text-xl px-8">בדוק! ⛏️</button>
+                    <button onclick="skipQ()" id="skip-btn" class="btn-mc btn-gold">דלג ⏩</button>
                 </div>
 
-                <div id="feedback" class="hidden mt-2 p-3 border-2 border-white text-center font-bold text-lg flex-shrink-0" style="background:#333;"></div>
+                <div id="feedback" class="hidden mt-4 p-4 border-2 border-white text-center font-bold text-xl" style="background:#333;"></div>
             </div>
 
             <!-- 5. Summary -->
-            <div id="summary-view" class="view hidden text-center p-4 h-full overflow-y-auto">
-                <h2 class="text-3xl mb-4 text-green-600" style="text-shadow: 2px 2px #FFF">סיום כרייה!</h2>
-                <div class="bg-gray-300 border-4 border-black p-4 mb-4 inline-block w-full max-w-md">
-                    <div class="text-3xl mb-2 font-bold text-blue-800">ציון: <span id="final-grade">100%</span></div>
-                    <div class="text-lg text-black border-t border-gray-500 pt-2 flex justify-around">
-                        <p>ניקוד: <span id="final-score">0</span></p>
-                        <p>יהלומים: <span id="final-diamonds">0</span> 💎</p>
+            <div id="summary-view" class="view hidden text-center p-8 h-full overflow-y-auto">
+                <h2 class="text-4xl mb-6 text-green-600" style="text-shadow: 2px 2px #FFF">סיום כרייה!</h2>
+                <div class="bg-gray-300 border-4 border-black p-6 mb-6 inline-block min-w-[300px]">
+                    <div class="text-4xl mb-4 font-bold text-blue-800">ציון משימה: <span id="final-grade">100%</span></div>
+                    <div class="text-xl text-black border-t border-gray-500 pt-2">
+                        <p>סה"כ ניקוד כללי: <span id="final-score">0</span></p>
+                        <p>סה"כ יהלומים: <span id="final-diamonds">0</span> 💎</p>
                     </div>
                 </div>
                 
-                <div id="next-level-container" class="hidden mb-4">
-                    <button onclick="goToNextMission()" class="btn-mc btn-grass w-full py-3 text-xl shadow-xl animate-bounce">
+                <!-- Direct Next Mission Button -->
+                <div id="next-level-container" class="hidden mb-6">
+                    <button onclick="goToNextMission()" class="btn-mc btn-grass w-full py-4 text-2xl shadow-xl animate-bounce">
                         המשימה הבאה ⏭️
                     </button>
                 </div>
 
-                <div id="retake-section" class="hidden mb-4">
-                    <p class="text-red-600 font-bold mb-2 text-lg">נמצאו פריטים פגומים!</p>
-                    <button onclick="startReview()" class="btn-mc btn-obsidian text-purple-300 border-purple-500 w-full py-3 text-lg animate-pulse">
-                        ♻️ מבחן חוזר
+                <div id="retake-section" class="hidden mb-6">
+                    <p class="text-red-600 font-bold mb-2 text-xl">נמצאו פריטים פגומים (טעויות)!</p>
+                    <button onclick="startReview()" class="btn-mc btn-obsidian text-purple-300 border-purple-500 w-full py-4 text-xl animate-pulse">
+                        ♻️ מבחן חוזר (תקן טעויות)
                     </button>
                 </div>
 
-                <div class="text-right mb-4">
-                    <h3 class="text-lg mb-2 text-gray-700">יומן חפירות:</h3>
-                    <div class="bg-gray-800 border-2 border-white p-2 h-40 overflow-y-auto">
+                <div class="text-right mb-6">
+                    <h3 class="text-xl mb-2 text-gray-700">יומן חפירות (טעויות):</h3>
+                    <div class="bg-gray-800 border-2 border-white p-2 h-48 overflow-y-auto">
                         <table class="log-table text-sm text-white">
-                            <thead><tr class="border-b border-gray-600"><th>שאלה</th><th>תשובה</th></tr></thead>
+                            <thead><tr class="border-b border-gray-600"><th>שאלה</th><th>תשובה נכונה</th></tr></thead>
                             <tbody id="error-log-body"></tbody>
                         </table>
-                        <p id="no-errors-text" class="hidden text-center text-green-400 mt-4 font-bold text-lg">עבודה מושלמת!</p>
+                        <p id="no-errors-text" class="hidden text-center text-green-400 mt-4 font-bold text-lg">עבודה מושלמת! אין תקלות במכרה.</p>
                     </div>
                 </div>
                 
@@ -749,13 +531,13 @@
     </div>
 
     <!-- Tips Modal (Spellbook) -->
-    <div id="tips-modal" class="hidden fixed inset-0 bg-black bg-opacity-90 flex items-center justify-center z-50 p-4">
-        <div class="bg-gray-200 border-4 border-black p-4 max-w-lg w-full relative text-black max-h-[90vh] overflow-y-auto rounded" style="background: #c6c6c6;">
-            <button onclick="hideTips()" class="absolute top-2 left-2 font-bold text-red-600 text-lg btn-mc btn-stone px-3 py-1">X</button>
+    <div id="tips-modal" class="hidden fixed inset-0 bg-black bg-opacity-90 flex items-center justify-center z-50">
+        <div class="bg-gray-200 border-4 border-black p-6 max-w-2xl w-full relative text-black h-[80vh] overflow-y-auto" style="background: #c6c6c6;">
+            <button onclick="hideTips()" class="absolute top-2 left-2 font-bold text-red-600 text-xl btn-mc btn-stone">X סגור</button>
             
-            <div class="text-center mb-4 mt-2">
-                <h3 class="text-2xl font-bold mb-1" style="color: #3f3f3f;">📖 ספר המכשף</h3>
-                <p class="text-gray-700 font-bold text-sm">מדריך אסטרטגי</p>
+            <div class="text-center mb-6">
+                <h3 class="text-3xl font-bold mb-2" style="color: #3f3f3f; text-shadow: 2px 2px #fff;">📖 ספר המכשף</h3>
+                <p class="text-gray-700 font-bold">מדריך אסטרטגי לפתרון בעיות</p>
             </div>
 
             <div id="tips-content">
@@ -765,27 +547,35 @@
     </div>
 
     <!-- Admin / Uploader Modal -->
-    <div id="admin-panel-modal" class="hidden fixed inset-0 bg-black bg-opacity-90 flex items-center justify-center z-50 p-2">
-        <div class="bg-orange-200 border-4 border-orange-900 p-4 max-w-2xl w-full relative text-black h-[500px] flex flex-col font-mono rounded" style="background-color: #C77E4F; border-color: #5C3A21;">
+    <div id="admin-panel-modal" class="hidden fixed inset-0 bg-black bg-opacity-90 flex items-center justify-center z-50">
+        <div class="bg-orange-200 border-4 border-orange-900 p-6 max-w-2xl w-full relative text-black h-[550px] flex flex-col font-mono" style="background-color: #C77E4F; border-color: #5C3A21;">
             <button onclick="hideAdminPanel()" class="absolute top-2 left-2 font-bold text-red-900 text-xl">X</button>
             
-            <div class="flex items-center justify-center gap-3 mb-2">
-                <span class="text-2xl">🖥️</span>
-                <h3 class="text-xl font-bold text-center text-white drop-shadow-md">Command Block</h3>
+            <div class="flex items-center justify-center gap-3 mb-4">
+                <span class="text-4xl">🖥️</span>
+                <h3 class="text-2xl font-bold text-center text-white drop-shadow-md">Command Block: Uploader</h3>
             </div>
             
-            <p class="text-xs text-center mb-2 text-white font-bold bg-black bg-opacity-20 p-1 rounded">
-                הכנס JSON לטעינת שאלות.
+            <p class="text-sm text-center mb-4 text-white font-bold bg-black bg-opacity-20 p-2 rounded">
+                הכנס פקודות JSON כדי לטעון שאלות חדשות לעולם.
             </p>
             
-            <textarea id="json-input" class="flex-grow p-2 font-mono text-xs border-4 border-orange-800 bg-black text-green-400 mb-2 rounded shadow-inner" 
-            placeholder='[{"missionId":1,"q":"...","n":1,"d":2,"type":"M_ID"}]'></textarea>
+            <textarea id="json-input" class="flex-grow p-4 font-mono text-sm border-4 border-orange-800 bg-black text-green-400 mb-4 rounded shadow-inner" 
+            placeholder='[
+  { 
+    "missionId": 1, 
+    "q": "שאלה חדשה...", 
+    "n": 1, "d": 2, 
+    "type": "M_ID", 
+    "theme": "diamond" 
+  }
+]'></textarea>
             
-            <div class="flex gap-2">
-                <button onclick="loadCustomQuestions()" class="btn-mc btn-green flex-1 text-sm shadow-lg">Load</button>
-                <button onclick="clearCustomQuestions()" class="btn-mc btn-red flex-1 text-sm shadow-lg">Reset</button>
+            <div class="flex gap-4">
+                <button onclick="loadCustomQuestions()" class="btn-mc btn-green flex-1 shadow-lg">Load Data (טען)</button>
+                <button onclick="clearCustomQuestions()" class="btn-mc btn-red flex-1 shadow-lg">Reset World (נקה)</button>
             </div>
-            <p id="admin-feedback" class="text-center mt-1 font-bold text-white text-xs"></p>
+            <p id="admin-feedback" class="text-center mt-2 font-bold text-white"></p>
         </div>
     </div>
 
@@ -885,7 +675,83 @@
             
             // --- NEW: Weaponry (Bow/Arrow) ---
             bow: "https://static.wikia.nocookie.net/minecraft_gamepedia/images/a/a5/Bow_JE2_BE1.png",
-            arrow: "https://static.wikia.nocookie.net/minecraft_gamepedia/images/4/4e/Arrow_JE2_BE1.png"
+            arrow: "https://static.wikia.nocookie.net/minecraft_gamepedia/images/4/4e/Arrow_JE2_BE1.png",
+            
+            // --- FULL TOOLSETS ---
+            sword_wood: "https://static.wikia.nocookie.net/minecraft_gamepedia/images/d/d5/Wooden_Sword_JE2_BE2.png",
+            sword_stone: "https://static.wikia.nocookie.net/minecraft_gamepedia/images/b/b1/Stone_Sword_JE2_BE2.png",
+            sword_iron: "https://static.wikia.nocookie.net/minecraft_gamepedia/images/8/8e/Iron_Sword_JE2_BE2.png",
+            sword_gold: "https://static.wikia.nocookie.net/minecraft_gamepedia/images/d/d7/Golden_Sword_JE2_BE2.png",
+            sword_diamond: "https://static.wikia.nocookie.net/minecraft_gamepedia/images/6/6a/Diamond_Sword_JE2_BE2.png",
+            sword_netherite: "https://static.wikia.nocookie.net/minecraft_gamepedia/images/d/d5/Netherite_Sword_JE2_BE2.png",
+
+            pickaxe_wood: "https://static.wikia.nocookie.net/minecraft_gamepedia/images/a/a2/Wooden_Pickaxe_JE3_BE3.png",
+            pickaxe_stone: "https://static.wikia.nocookie.net/minecraft_gamepedia/images/c/c4/Stone_Pickaxe_JE2_BE2.png",
+            pickaxe_iron: "https://static.wikia.nocookie.net/minecraft_gamepedia/images/d/d1/Iron_Pickaxe_JE3_BE2.png",
+            pickaxe_gold: "https://static.wikia.nocookie.net/minecraft_gamepedia/images/e/e0/Golden_Pickaxe_JE3_BE2.png",
+            pickaxe_diamond: "https://static.wikia.nocookie.net/minecraft_gamepedia/images/c/c4/Diamond_Pickaxe_JE3_BE3.png",
+            pickaxe_netherite: "https://static.wikia.nocookie.net/minecraft_gamepedia/images/5/54/Netherite_Pickaxe_JE2_BE2.png",
+
+            axe_wood: "https://static.wikia.nocookie.net/minecraft_gamepedia/images/5/5b/Wooden_Axe_JE2_BE2.png",
+            axe_stone: "https://static.wikia.nocookie.net/minecraft_gamepedia/images/1/1d/Stone_Axe_JE2_BE2.png",
+            axe_iron: "https://static.wikia.nocookie.net/minecraft_gamepedia/images/3/3d/Iron_Axe_JE2_BE2.png",
+            axe_gold: "https://static.wikia.nocookie.net/minecraft_gamepedia/images/5/54/Golden_Axe_JE2_BE2.png",
+            axe_diamond: "https://static.wikia.nocookie.net/minecraft_gamepedia/images/4/47/Diamond_Axe_JE3_BE3.png",
+            axe_netherite: "https://static.wikia.nocookie.net/minecraft_gamepedia/images/a/a8/Netherite_Axe_JE2_BE2.png",
+
+            shovel_wood: "https://static.wikia.nocookie.net/minecraft_gamepedia/images/b/b8/Wooden_Shovel_JE2_BE2.png",
+            shovel_stone: "https://static.wikia.nocookie.net/minecraft_gamepedia/images/6/6a/Stone_Shovel_JE2_BE2.png",
+            shovel_iron: "https://static.wikia.nocookie.net/minecraft_gamepedia/images/2/27/Iron_Shovel_JE2_BE2.png",
+            shovel_gold: "https://static.wikia.nocookie.net/minecraft_gamepedia/images/9/9b/Golden_Shovel_JE2_BE2.png",
+            shovel_diamond: "https://static.wikia.nocookie.net/minecraft_gamepedia/images/1/14/Diamond_Shovel_JE3_BE3.png",
+            shovel_netherite: "https://static.wikia.nocookie.net/minecraft_gamepedia/images/3/36/Netherite_Shovel_JE2_BE2.png",
+
+            hoe_wood: "https://static.wikia.nocookie.net/minecraft_gamepedia/images/2/23/Wooden_Hoe_JE2_BE2.png",
+            hoe_stone: "https://static.wikia.nocookie.net/minecraft_gamepedia/images/2/29/Stone_Hoe_JE2_BE2.png",
+            hoe_iron: "https://static.wikia.nocookie.net/minecraft_gamepedia/images/a/a8/Iron_Hoe_JE2_BE2.png",
+            hoe_gold: "https://static.wikia.nocookie.net/minecraft_gamepedia/images/3/3c/Golden_Hoe_JE2_BE2.png",
+            hoe_diamond: "https://static.wikia.nocookie.net/minecraft_gamepedia/images/9/90/Diamond_Hoe_JE3_BE3.png",
+            hoe_netherite: "https://static.wikia.nocookie.net/minecraft_gamepedia/images/5/56/Netherite_Hoe_JE2_BE2.png",
+
+            // --- FULL ARMOR SETS ---
+            helmet_leather: "https://static.wikia.nocookie.net/minecraft_gamepedia/images/1/1a/Leather_Cap_JE4_BE2.png",
+            helmet_chain: "https://static.wikia.nocookie.net/minecraft_gamepedia/images/0/0f/Chainmail_Helmet_JE2_BE2.png",
+            helmet_iron: "https://static.wikia.nocookie.net/minecraft_gamepedia/images/2/22/Iron_Helmet_JE2_BE2.png",
+            helmet_gold: "https://static.wikia.nocookie.net/minecraft_gamepedia/images/b/b2/Golden_Helmet_JE2_BE2.png",
+            helmet_diamond: "https://static.wikia.nocookie.net/minecraft_gamepedia/images/0/0a/Diamond_Helmet_JE2_BE2.png",
+            helmet_netherite: "https://static.wikia.nocookie.net/minecraft_gamepedia/images/2/2f/Netherite_Helmet_JE2_BE2.png",
+
+            chestplate_leather: "https://static.wikia.nocookie.net/minecraft_gamepedia/images/b/b7/Leather_Tunic_JE4_BE2.png",
+            chestplate_chain: "https://static.wikia.nocookie.net/minecraft_gamepedia/images/9/98/Chainmail_Chestplate_JE2_BE2.png",
+            chestplate_iron: "https://static.wikia.nocookie.net/minecraft_gamepedia/images/7/7c/Iron_Chestplate_JE2_BE2.png",
+            chestplate_gold: "https://static.wikia.nocookie.net/minecraft_gamepedia/images/0/07/Golden_Chestplate_JE2_BE2.png",
+            chestplate_diamond: "https://static.wikia.nocookie.net/minecraft_gamepedia/images/2/22/Diamond_Chestplate_JE3_BE3.png",
+            chestplate_netherite: "https://static.wikia.nocookie.net/minecraft_gamepedia/images/5/56/Netherite_Chestplate_JE2_BE2.png",
+
+            leggings_leather: "https://static.wikia.nocookie.net/minecraft_gamepedia/images/1/10/Leather_Pants_JE4_BE2.png",
+            leggings_chain: "https://static.wikia.nocookie.net/minecraft_gamepedia/images/8/84/Chainmail_Leggings_JE2_BE2.png",
+            leggings_iron: "https://static.wikia.nocookie.net/minecraft_gamepedia/images/3/3d/Iron_Leggings_JE2_BE2.png",
+            leggings_gold: "https://static.wikia.nocookie.net/minecraft_gamepedia/images/0/07/Golden_Leggings_JE2_BE2.png",
+            leggings_diamond: "https://static.wikia.nocookie.net/minecraft_gamepedia/images/e/e1/Diamond_Leggings_JE2_BE2.png",
+            leggings_netherite: "https://static.wikia.nocookie.net/minecraft_gamepedia/images/0/06/Netherite_Leggings_JE3_BE2.png",
+
+            boots_leather: "https://static.wikia.nocookie.net/minecraft_gamepedia/images/1/12/Leather_Boots_JE2_BE2.png",
+            boots_chain: "https://static.wikia.nocookie.net/minecraft_gamepedia/images/f/f5/Chainmail_Boots_JE2_BE2.png",
+            boots_iron: "https://static.wikia.nocookie.net/minecraft_gamepedia/images/8/80/Iron_Boots_JE2_BE2.png",
+            boots_gold: "https://static.wikia.nocookie.net/minecraft_gamepedia/images/5/52/Golden_Boots_JE2_BE2.png",
+            boots_diamond: "https://static.wikia.nocookie.net/minecraft_gamepedia/images/b/bd/Diamond_Boots_JE2_BE2.png",
+            boots_netherite: "https://static.wikia.nocookie.net/minecraft_gamepedia/images/9/9b/Netherite_Boots_JE2_BE2.png",
+
+            // Basic aliases for backward compatibility
+            pickaxe: "https://static.wikia.nocookie.net/minecraft_gamepedia/images/c/c4/Diamond_Pickaxe_JE3_BE3.png",
+            axe: "https://static.wikia.nocookie.net/minecraft_gamepedia/images/4/47/Diamond_Axe_JE3_BE3.png",
+            shovel: "https://static.wikia.nocookie.net/minecraft_gamepedia/images/1/14/Diamond_Shovel_JE3_BE3.png",
+            hoe: "https://static.wikia.nocookie.net/minecraft_gamepedia/images/9/90/Diamond_Hoe_JE3_BE3.png",
+            clock: "https://static.wikia.nocookie.net/minecraft_gamepedia/images/6/62/Clock_JE3.gif",
+            compass: "https://static.wikia.nocookie.net/minecraft_gamepedia/images/f/f6/Compass_JE3_BE3.gif",
+            shears: "https://static.wikia.nocookie.net/minecraft_gamepedia/images/3/30/Shears_JE2_BE2.png",
+            flint_and_steel: "https://static.wikia.nocookie.net/minecraft_gamepedia/images/2/2f/Flint_and_Steel_JE4_BE2.png",
+            fishing_rod: "https://static.wikia.nocookie.net/minecraft_gamepedia/images/7/7f/Fishing_Rod_JE2_BE2.png"
         };
         
         // 3D Blocks/Items for the visualizer
@@ -900,7 +766,20 @@
             emerald: "https://static.wikia.nocookie.net/minecraft_gamepedia/images/0/0b/Block_of_Emerald_JE4_BE3.png",
             coal: "https://static.wikia.nocookie.net/minecraft_gamepedia/images/a/a3/Block_of_Coal_JE3_BE2.png",
             cake: "https://static.wikia.nocookie.net/minecraft_gamepedia/images/c/c2/Cake_JE4.png",
-            // New items for visualizer
+            
+            // NEW BLOCKS
+            netherrack: "https://static.wikia.nocookie.net/minecraft_gamepedia/images/d/d4/Netherrack_JE4_BE2.png",
+            sand: "https://static.wikia.nocookie.net/minecraft_gamepedia/images/b/bb/Sand_JE6_BE3.png",
+            end_stone: "https://static.wikia.nocookie.net/minecraft_gamepedia/images/0/05/End_Stone_JE3_BE2.png",
+            planks_oak: "https://static.wikia.nocookie.net/minecraft_gamepedia/images/c/c1/Oak_Planks_JE6_BE3.png",
+            ore_coal: "https://static.wikia.nocookie.net/minecraft_gamepedia/images/2/2f/Coal_Ore_JE4_BE3.png",
+            ore_iron: "https://static.wikia.nocookie.net/minecraft_gamepedia/images/5/55/Iron_Ore_JE5_BE4.png",
+            ore_gold: "https://static.wikia.nocookie.net/minecraft_gamepedia/images/8/81/Gold_Ore_JE5_BE3.png",
+            ore_diamond: "https://static.wikia.nocookie.net/minecraft_gamepedia/images/9/9b/Diamond_Ore_JE4_BE4.png",
+            brick: "https://static.wikia.nocookie.net/minecraft_gamepedia/images/5/53/Brick_JE2_BE2.png",
+            wool_white: "https://static.wikia.nocookie.net/minecraft_gamepedia/images/8/86/White_Wool_JE3_BE2.png",
+
+            // Mapped Items for Visuals
             bread: "https://static.wikia.nocookie.net/minecraft_gamepedia/images/9/94/Bread_JE2_BE2.png",
             cookie: "https://static.wikia.nocookie.net/minecraft_gamepedia/images/b/b3/Cookie_JE2_BE2.png",
             redstone: "https://static.wikia.nocookie.net/minecraft_gamepedia/images/d/d5/Redstone_Dust_JE2_BE2.png",
@@ -922,104 +801,32 @@
         };
 
         const ANSWER_DISPLAY_MAP = {
-            "proper": "קטן מ-1",
-            "improper": "גדול מ-1",
-            "verb": "פועל (Verb)",
-            "adj": "תואר (Adjective)",
-            "calendar": "זמן (Calendar)",
-            "number": "מספר (Number)",
-            "am": "am", "is": "is", "are": "are",
+            "proper": "קטן מ-1", "improper": "גדול מ-1", "verb": "פועל (Verb)", "adj": "תואר (Adjective)",
+            "calendar": "זמן (Calendar)", "number": "מספר (Number)", "am": "am", "is": "is", "are": "are",
             "<": "< (קטן מ)", ">": "> (גדול מ)", "=": "= (שווה)"
         };
 
-        // --- NEW: Contextual Help Logic ---
+        // --- Wizard Hints ---
         const HINTS = {
-            "M_ID": `
-                <div class="wizard-section">
-                    <div class="wizard-title"><span class="text-2xl">🔢</span> זיהוי שברים</div>
-                    <div class="wizard-content">
-                        <p>כדי למצוא את השבר:</p>
-                        <ul class="list-disc pr-5">
-                            <li><strong>המונה (למעלה):</strong> ספור כמה פריטים <u>מלאים</u> או צבעוניים אתה רואה.</li>
-                            <li><strong>המכנה (למטה):</strong> ספור את <u>כל</u> הפריטים בשורה (גם השקופים/אפורים).</li>
-                        </ul>
-                    </div>
-                </div>`,
-            "M_WORD": `
-                <div class="wizard-section">
-                    <div class="wizard-title"><span class="text-2xl">📜</span> בעיה מילולית</div>
-                    <div class="wizard-content">
-                        <p>חפש מילים חשובות:</p>
-                        <ul class="list-disc pr-5">
-                            <li>"נשארו" / "הלך לאיבוד" = תרגיל חיסור (-).</li>
-                            <li>"סך הכל" / "יחד" = תרגיל חיבור (+).</li>
-                            <li>"חלק מ..." = כפל (למשל: 1/4 מ-12 זה 12 לחלק ל-4).</li>
-                        </ul>
-                    </div>
-                </div>`,
-            "M_SORT": `
-                <div class="wizard-section">
-                    <div class="wizard-title"><span class="text-2xl">⚖️</span> סוגי שברים</div>
-                    <div class="wizard-content">
-                        <ul class="list-disc pr-5">
-                            <li><strong>קטן מ-1 (Proper):</strong> המונה (למעלה) קטן מהמכנה (למטה).</li>
-                            <li><strong>גדול/שווה ל-1 (Improper):</strong> המונה גדול או שווה למכנה.</li>
-                        </ul>
-                    </div>
-                </div>`,
-            "M_CMP": `
-                <div class="wizard-section">
-                    <div class="wizard-title"><span class="text-2xl">🆚</span> השוואת שברים</div>
-                    <div class="wizard-content">
-                        <p>השתמש בשיטת הכפל בהצלבה:</p>
-                        <p>הכפל את המונה של צד ימין במכנה של צד שמאל, וההפך. המספר הגדול יותר מנצח!</p>
-                    </div>
-                </div>`,
-            "E_SORT_4": `
-                <div class="wizard-section">
-                    <div class="wizard-title"><span class="text-2xl">🔤</span> חלקי הדיבור</div>
-                    <div class="wizard-content">
-                        <ul class="list-disc pr-5">
-                            <li><strong>Verb (פועל):</strong> משהו שעושים (כמו Eat, Run, Craft).</li>
-                            <li><strong>Adjective (תואר):</strong> מתאר איך משהו נראה/מרגיש (Blue, Fast).</li>
-                            <li><strong>Number:</strong> מספר (One, Ten).</li>
-                            <li><strong>Calendar:</strong> זמן (Monday, May).</li>
-                        </ul>
-                    </div>
-                </div>`,
-            "E_TOBE": `
-                <div class="wizard-section">
-                    <div class="wizard-title"><span class="text-2xl">👤</span> הפועל To Be</div>
-                    <div class="wizard-content">
-                        <ul class="list-disc pr-5">
-                            <li><strong>Am:</strong> הולך תמיד עם <strong>I</strong>.</li>
-                            <li><strong>Is:</strong> הולך עם יחיד (He, She, It, Steve).</li>
-                            <li><strong>Are:</strong> הולך עם רבים (We, They, You).</li>
-                        </ul>
-                    </div>
-                </div>`,
-            "E_READ": `
-                <div class="wizard-section">
-                    <div class="wizard-title"><span class="text-2xl">📖</span> הבנת הנקרא</div>
-                    <div class="wizard-content">
-                        <p>חפש את מילת המפתח מהשאלה בתוך הטקסט (בסוגריים). התשובה נמצאת ממש לידה!</p>
-                    </div>
-                </div>`
+            "M_ID": `<div class="wizard-section"><div class="wizard-title"><span class="text-2xl">🔢</span> זיהוי שברים</div><div class="wizard-content"><p>כדי למצוא את השבר:</p><ul class="list-disc pr-5"><li><strong>המונה (למעלה):</strong> ספור פריטים <u>מלאים</u>.</li><li><strong>המכנה (למטה):</strong> ספור את <u>כל</u> הפריטים.</li></ul></div></div>`,
+            "M_WORD": `<div class="wizard-section"><div class="wizard-title"><span class="text-2xl">📜</span> בעיה מילולית</div><div class="wizard-content"><ul class="list-disc pr-5"><li>"נשארו" = חיסור (-).</li><li>"סך הכל" = חיבור (+).</li><li>"חלק מ..." = כפל (למשל: 1/4 מ-12 = 12/4).</li></ul></div></div>`,
+            "M_SORT": `<div class="wizard-section"><div class="wizard-title"><span class="text-2xl">⚖️</span> סוגי שברים</div><div class="wizard-content"><ul class="list-disc pr-5"><li><strong>קטן מ-1:</strong> מונה < מכנה.</li><li><strong>גדול/שווה ל-1:</strong> מונה >= מכנה.</li></ul></div></div>`,
+            "M_CMP": `<div class="wizard-section"><div class="wizard-title"><span class="text-2xl">🆚</span> השוואת שברים</div><div class="wizard-content"><p>שיטת הכפל בהצלבה: כפול מונה בצד אחד במכנה של השני. הגדול מנצח!</p></div></div>`,
+            "E_SORT_4": `<div class="wizard-section"><div class="wizard-title"><span class="text-2xl">🔤</span> חלקי הדיבור</div><div class="wizard-content"><ul class="list-disc pr-5"><li><strong>Verb:</strong> פעולה (Eat, Run).</li><li><strong>Adjective:</strong> תיאור (Blue, Fast).</li></ul></div></div>`,
+            "E_TOBE": `<div class="wizard-section"><div class="wizard-title"><span class="text-2xl">👤</span> To Be</div><div class="wizard-content"><ul class="list-disc pr-5"><li><strong>Am:</strong> עם I.</li><li><strong>Is:</strong> עם יחיד (He, She, It).</li><li><strong>Are:</strong> עם רבים (We, They).</li></ul></div></div>`,
+            "E_READ": `<div class="wizard-section"><div class="wizard-title"><span class="text-2xl">📖</span> הבנת הנקרא</div><div class="wizard-content"><p>חפש את מילת המפתח בטקסט. התשובה לידה!</p></div></div>`
         };
 
         function showContextualHelp() {
-            // If inside a specific question in game view
             if (!document.getElementById('game-view').classList.contains('hidden') && gameState.historyIndex >= 0) {
                 const currentQ = gameState.history[gameState.historyIndex]?.data;
                 if (currentQ) {
-                     const hintHTML = HINTS[currentQ.type] || "<p>אין רמז זמין לסוג שאלה זה.</p>";
+                     const hintHTML = HINTS[currentQ.type] || "<p>אין רמז זמין.</p>";
                      document.getElementById('tips-content').innerHTML = hintHTML;
                      document.getElementById('tips-modal').classList.remove('hidden');
                      return;
                 }
             }
-            
-            // Fallback: Show general tips (the Menu view or generic)
             showTips(); 
         }
 
@@ -1033,183 +840,92 @@
 
         const MUSIC = document.getElementById('bg-music');
         let musicPlaying = false;
-
-        // --- Environment System (Day/Night & Weather) ---
-        let envInterval;
-        let isNight = false;
+        let envInterval; let isNight = false;
         
         function initEnvironment() {
-            // Generate Stars
             const starsContainer = document.getElementById('stars-container');
             for(let i=0; i<50; i++) {
-                const star = document.createElement('div');
-                star.className = 'star';
-                star.style.top = Math.random() * 50 + '%';
-                star.style.left = Math.random() * 100 + '%';
-                star.style.animationDelay = Math.random() * 2 + 's';
-                starsContainer.appendChild(star);
+                const star = document.createElement('div'); star.className = 'star';
+                star.style.top = Math.random()*50+'%'; star.style.left = Math.random()*100+'%';
+                star.style.animationDelay = Math.random()*2+'s'; starsContainer.appendChild(star);
             }
-
-            // Generate Rain Drops
             const rainContainer = document.getElementById('rain-container');
             for(let i=0; i<50; i++) {
-                const drop = document.createElement('div');
-                drop.className = 'rain-drop';
-                drop.style.left = Math.random() * 100 + '%';
-                drop.style.animationDuration = (0.5 + Math.random() * 0.3) + 's';
-                drop.style.animationDelay = Math.random() * 2 + 's';
+                const drop = document.createElement('div'); drop.className = 'rain-drop';
+                drop.style.left = Math.random()*100+'%';
+                drop.style.animationDuration = (0.5+Math.random()*0.3)+'s';
                 rainContainer.appendChild(drop);
             }
-
-            // Start Cycle
             if(envInterval) clearInterval(envInterval);
-            envInterval = setInterval(cycleEnvironment, 10000); // Check/Change every 10s for demo speed
-            
-            // Start scenery generator
+            envInterval = setInterval(cycleEnvironment, 30000); // הגדלה ל-30 שניות
             setInterval(spawnScenery, 3000);
         }
 
         function cycleEnvironment() {
             const world = document.getElementById('world-layer');
-            const sun = document.querySelector('.sun');
-            const moon = document.querySelector('.moon');
-            
-            // Toggle Day/Night
+            const sun = document.querySelector('.sun'); const moon = document.querySelector('.moon');
             isNight = !isNight;
-            
-            if(isNight) {
-                world.classList.add('night');
-                sun.style.top = "110%"; // Sun sets
-                moon.style.top = "15%"; // Moon rises
-            } else {
-                world.classList.remove('night');
-                sun.style.top = "10%"; // Sun rises
-                moon.style.top = "110%"; // Moon sets
-            }
-
-            // Random Weather (30% chance of change)
-            if(Math.random() > 0.7) {
+            if(isNight) { world.classList.add('night'); sun.style.top="110%"; moon.style.top="15%"; } 
+            else { world.classList.remove('night'); sun.style.top="10%"; moon.style.top="110%"; }
+            if(Math.random()>0.7) {
                 const weatherType = Math.random();
                 world.classList.remove('raining', 'storm');
-                
-                if(weatherType > 0.6) {
-                    // Storm
-                    world.classList.add('raining', 'storm');
-                    triggerLightning();
-                } else if (weatherType > 0.3) {
-                    // Just Rain
-                    world.classList.add('raining');
-                }
-            } else {
-                // Clear weather
-                world.classList.remove('raining', 'storm');
-            }
+                if(weatherType>0.6) { world.classList.add('raining', 'storm'); triggerLightning(); }
+                else if (weatherType>0.3) { world.classList.add('raining'); }
+            } else { world.classList.remove('raining', 'storm'); }
         }
 
         function triggerLightning() {
-            const flash = document.querySelector('.lightning-flash');
-            const thunder = document.getElementById('sfx-thunder');
-            
-            flash.style.animation = 'none';
-            flash.offsetHeight; /* trigger reflow */
-            flash.style.animation = "flashLightning 1s forwards";
-            
-            // Play sound only if interacted/allowed
-            thunder.currentTime = 0;
-            thunder.play().catch(()=>{});
+            const flash = document.querySelector('.lightning-flash'); const thunder = document.getElementById('sfx-thunder');
+            flash.style.animation = 'none'; flash.offsetHeight; flash.style.animation = "flashLightning 1s forwards";
+            thunder.currentTime = 0; thunder.play().catch(()=>{});
         }
         
         function spawnScenery() {
             const container = document.getElementById('scenery-layer');
             if(!container || document.hidden) return;
-            
-            const tower = document.createElement('div');
-            tower.className = 'tower-stack';
-            tower.style.left = Math.random() * 100 + '%';
-            
-            // Random height between 2 and 5 blocks
-            const height = Math.floor(Math.random() * 4) + 2;
+            const tower = document.createElement('div'); tower.className = 'tower-stack';
+            tower.style.left = Math.random()*100+'%';
+            const height = Math.floor(Math.random()*4)+2;
             for(let i=0; i<height; i++) {
-                const block = document.createElement('div');
-                block.className = 'tower-block';
+                const block = document.createElement('div'); block.className = 'tower-block';
                 tower.appendChild(block);
             }
-            
             container.appendChild(tower);
-            
-            // Remove after animation
-            setTimeout(() => {
-                if(tower.parentNode) tower.parentNode.removeChild(tower);
-            }, 10000);
+            setTimeout(() => { if(tower.parentNode) tower.parentNode.removeChild(tower); }, 10000);
         }
 
-        // --- Intro Logic ---
         function playIntro() {
             document.getElementById('start-btn-container').classList.add('hidden');
-            const introAnim = document.getElementById('intro-animation');
-            const introTitle = document.getElementById('intro-title');
-            
-            // Step 1: Show Enderman
-            introAnim.classList.remove('hidden');
-            document.getElementById('scary-enderman').classList.add('intro-running');
-            
-            const thunder = document.getElementById('sfx-thunder');
-            thunder.volume = 0.8;
-            thunder.play().catch(e=>console.log("Audio requires interaction"));
-            
-            const flash = document.querySelector('.lightning-flash');
-            flash.style.animation = "flashLightning 3s forwards";
-
-            // Step 2: After 2.5s, Hide Enderman, Show Title
-            setTimeout(() => {
-                introAnim.classList.add('hidden');
-                introTitle.classList.remove('hidden');
-            }, 2500);
-
-            // Step 3: After another 3s (5.5s total), Start Game
+            const introAnim = document.getElementById('intro-animation'); const introTitle = document.getElementById('intro-title');
+            introAnim.classList.remove('hidden'); document.getElementById('scary-enderman').classList.add('intro-running');
+            document.getElementById('sfx-thunder').play().catch(()=>{});
+            document.querySelector('.lightning-flash').style.animation = "flashLightning 3s forwards";
+            setTimeout(() => { introAnim.classList.add('hidden'); introTitle.classList.remove('hidden'); }, 2500);
             setTimeout(() => {
                 document.getElementById('cinematic-overlay').classList.add('hidden');
-                introTitle.classList.add('hidden'); // Reset for next time
-                document.getElementById('main-interface').classList.remove('hidden');
-                initEnvironment(); // Start the world cycle
+                introTitle.classList.add('hidden'); document.getElementById('main-interface').classList.remove('hidden');
+                initEnvironment();
             }, 5500);
         }
 
         window.toggleMusic = () => {
             if(musicPlaying) { MUSIC.pause(); document.getElementById('music-btn').textContent="🎵 נגן"; }
-            else { MUSIC.play().catch(e=>console.log(e)); document.getElementById('music-btn').textContent="🔇 השתק"; }
+            else { MUSIC.play().catch(()=>{}); document.getElementById('music-btn').textContent="🔇 השתק"; }
             musicPlaying = !musicPlaying;
         };
 
         window.showHome = () => { 
-            showView('intro-view'); 
-            gameState.missionId = 0; 
-            gameState.history = []; 
-            gameState.historyIndex = -1; 
-            gameState.errors = []; 
-            gameState.isReview = false; 
-            gameState.missionScore = 0;
-            gameState.questionQueue = [];
-            updateUI(); 
+            showView('intro-view'); gameState.missionId=0; gameState.history=[]; gameState.errors=[]; gameState.isReview=false; updateUI(); 
         };
-        
         window.startGame = () => { if(!musicPlaying) toggleMusic(); showView('subject-menu-view'); };
         window.showView = (id) => { document.querySelectorAll('.view').forEach(v => v.classList.add('hidden')); document.getElementById(id).classList.remove('hidden'); };
         window.showMathMenu = () => showView('math-menu-view');
         window.showEnglishMenu = () => showView('english-menu-view');
-        
-        // Show general tips
         window.showTips = () => {
-            const content = document.getElementById('tips-content');
-            // Populate with all hints for general view
-            let allHints = "";
-            for (const key in HINTS) {
-                allHints += HINTS[key];
-            }
-            content.innerHTML = allHints;
-            document.getElementById('tips-modal').classList.remove('hidden');
+            let allHints = ""; for (const key in HINTS) allHints += HINTS[key];
+            document.getElementById('tips-content').innerHTML = allHints; document.getElementById('tips-modal').classList.remove('hidden');
         };
-
         window.hideTips = () => document.getElementById('tips-modal').classList.add('hidden');
         window.showAdminPanel = () => document.getElementById('admin-panel-modal').classList.remove('hidden');
         window.hideAdminPanel = () => document.getElementById('admin-panel-modal').classList.add('hidden');
@@ -1217,231 +933,119 @@
         window.loadCustomQuestions = () => {
             try {
                 const newQs = JSON.parse(document.getElementById('json-input').value);
-                if(!Array.isArray(newQs)) throw new Error();
-                let count = 0;
-                newQs.forEach(q => { if(q.missionId) { (q.missionId < 100 ? mathQ : engQ)[q.missionId]?.push(q); count++; } });
-                document.getElementById('admin-feedback').innerText = `Command Executed: Loaded ${count} questions!`;
-            } catch(e) { document.getElementById('admin-feedback').innerText = "Syntax Error: Invalid JSON"; }
+                newQs.forEach(q => { if(q.missionId) (q.missionId < 100 ? mathQ : engQ)[q.missionId]?.push(q); });
+                document.getElementById('admin-feedback').innerText = "Loaded!";
+            } catch(e) { document.getElementById('admin-feedback').innerText = "Error"; }
         };
-        window.clearCustomQuestions = () => { if(confirm("Are you sure you want to reset the world?")) location.reload(); };
+        window.clearCustomQuestions = () => { if(confirm("Reset?")) location.reload(); };
         window.changeDifficulty = () => gameState.difficulty = document.getElementById('difficulty-select').value;
         
-        // --- QUEUE & SHUFFLE LOGIC ---
         window.startMission = (id) => {
-            gameState.missionId = id;
-            gameState.history = [];
-            gameState.historyIndex = -1;
-            gameState.isReview = false;
-            gameState.missionScore = 0;
-            
-            // Get original pool
+            gameState.missionId = id; gameState.history = []; gameState.historyIndex = -1; gameState.isReview = false;
             let pool = (id < 100) ? mathQ[id] : engQ[id];
-            if (!pool) pool = [];
-            
-            // ** DUPLICATION LOGIC **
-            // If pool is smaller than MAX_QUESTIONS, duplicate content until it is enough
-            let fullPool = [...pool];
-            while (fullPool.length < MAX_QUESTIONS) {
-                fullPool = fullPool.concat(pool); // Append original questions again
-            }
-            
-            // Shuffle the expanded pool
+            let fullPool = pool ? [...pool] : [];
+            while (fullPool.length < MAX_QUESTIONS && fullPool.length > 0) fullPool = fullPool.concat(pool);
             gameState.questionQueue = fullPool.sort(() => Math.random() - 0.5);
-            
-            // Trim to exactly MAX_QUESTIONS if it got too big (optional, but clean)
-            showView('game-view');
-            window.nextQ();
+            showView('game-view'); window.nextQ();
         };
 
         window.startReview = () => {
             if (gameState.errors.length === 0) return;
-            const questionsToReview = [...gameState.errors];
-            gameState.history = [];
-            gameState.errors = []; 
-            gameState.historyIndex = -1;
-            gameState.isReview = true;
-            
-            questionsToReview.forEach(q => {
-                gameState.history.push({ data: q, solved: false, tries: 0 });
-            });
-            showView('game-view');
-            window.nextQ();
+            const reviewQs = [...gameState.errors]; gameState.history = []; gameState.errors = []; gameState.historyIndex = -1; gameState.isReview = true;
+            reviewQs.forEach(q => gameState.history.push({ data: q, solved: false, tries: 0 }));
+            showView('game-view'); window.nextQ();
         };
 
-        // --- Next Mission Logic ---
         function goToNextMission() {
-            // Logic to find next sequential ID
             let nextId = gameState.missionId + 1;
-            
-            // Check if next exists in either pool
-            if (mathQ[nextId] || engQ[nextId]) {
-                startMission(nextId);
-            } else {
-                alert("אין עוד משימות ברצף זה! כל הכבוד!");
-                showHome();
-            }
+            if (mathQ[nextId] || engQ[nextId]) startMission(nextId);
+            else { alert("סיימת את כל המשימות!"); showHome(); }
         }
 
         window.exitMission = () => {
             showView('summary-view');
-            
-            const totalQuestions = gameState.history.length;
-            const maxMissionScore = totalQuestions * 10;
-            let grade = 0;
-            if (maxMissionScore > 0) {
-                grade = Math.round((gameState.missionScore / maxMissionScore) * 100);
-            }
-
+            const total = gameState.history.length;
+            let grade = total > 0 ? Math.round((gameState.missionScore / (total * 10)) * 100) : 0;
             document.getElementById('final-score').textContent = gameState.score;
             document.getElementById('final-grade').textContent = grade + "%";
             document.getElementById('final-diamonds').textContent = gameState.diamonds;
+            const tbody = document.getElementById('error-log-body'); tbody.innerHTML = '';
             
-            const tbody = document.getElementById('error-log-body');
-            tbody.innerHTML = '';
-            
-            // Check if next mission exists to show/hide button
             const nextId = gameState.missionId + 1;
             const hasNext = (mathQ[nextId] || engQ[nextId]);
-            const nextBtnContainer = document.getElementById('next-level-container');
             
             if(gameState.errors.length === 0) {
                 document.getElementById('no-errors-text').classList.remove('hidden');
                 document.getElementById('retake-section').classList.add('hidden');
-                
-                // Only show next level if perfect score or just finished (optional logic: grade > 50)
-                if (hasNext) nextBtnContainer.classList.remove('hidden');
-                else nextBtnContainer.classList.add('hidden');
-
+                if (hasNext) document.getElementById('next-level-container').classList.remove('hidden');
+                else document.getElementById('next-level-container').classList.add('hidden');
             } else {
                 document.getElementById('no-errors-text').classList.add('hidden');
                 document.getElementById('retake-section').classList.remove('hidden');
-                nextBtnContainer.classList.add('hidden'); // Force review if errors exist (Game Design choice)
-                
+                document.getElementById('next-level-container').classList.add('hidden');
                 gameState.errors.forEach(q => { 
-                    // Determine display answer
-                    let ansDisplay = q.ans;
+                    let ansDisplay = q.ans || (q.type === 'M_WORD' ? (q.ansD === 1 ? q.ansN : `${q.ansN}/${q.ansD}`) : `${q.n}/${q.d}`);
                     if (ANSWER_DISPLAY_MAP[q.ans]) ansDisplay = ANSWER_DISPLAY_MAP[q.ans];
-                    
-                    if (!ansDisplay) { 
-                         // Fallback for fractions / custom number answers
-                         if(q.type === 'M_WORD') {
-                             // If the denominator is 1 (integer answer), just show the number
-                             if(q.ansD === 1) ansDisplay = `${q.ansN}`;
-                             else ansDisplay = `${q.ansN}/${q.ansD}`;
-                         }
-                         else ansDisplay = `${q.n}/${q.d}`;
-                    }
-
                     tbody.innerHTML += `<tr><td>${formatQuestionText(q.q)}</td><td dir="ltr" class="text-right">${ansDisplay}</td></tr>`; 
                 });
             }
         };
 
         window.nextQ = () => {
-            if(gameState.historyIndex < gameState.history.length - 1) { 
-                gameState.historyIndex++; 
-                renderQ(); 
-                updateUI(); // Ensure UI updates on history navigation
-            } 
-            else { 
-                generateQ(); 
-            }
+            if(gameState.historyIndex < gameState.history.length - 1) { gameState.historyIndex++; renderQ(); updateUI(); } 
+            else { generateQ(); }
             resetFeedback();
         };
-
-        window.prevQ = () => { 
-            if(gameState.historyIndex > 0) { 
-                gameState.historyIndex--; 
-                renderQ(); 
-                updateUI(); // Ensure UI updates on history navigation
-                resetFeedback(); 
-            } 
-        };
+        window.prevQ = () => { if(gameState.historyIndex > 0) { gameState.historyIndex--; renderQ(); updateUI(); resetFeedback(); } };
         
         window.skipQ = () => { 
             if (!gameState.isReview) {
-                 // ** UPDATED SKIP LOGIC **
-                 // Mark current question as error if it wasn't solved
                  const currItem = gameState.history[gameState.historyIndex];
-                 if (!currItem.solved) {
-                     // Check if already in errors to avoid duplicates? 
-                     // Actually, if we are here, we are moving past it unsolved.
-                     // The item.tries might be 0.
-                     // We add the DATA to errors list for retake.
-                     // We check if it's already there (e.g. user tried once, failed, then skipped)
-                     const alreadyError = gameState.errors.some(e => e === currItem.data);
-                     if (!alreadyError) {
-                         gameState.errors.push(currItem.data);
-                     }
-                 }
-
-                 if (gameState.history.length >= MAX_QUESTIONS) { 
-                      exitMission();
-                      return;
-                 }
+                 if (!currItem.solved && !gameState.errors.includes(currItem.data)) gameState.errors.push(currItem.data);
+                 if (gameState.history.length >= MAX_QUESTIONS) { exitMission(); return; }
             }
             window.nextQ();
         }
 
         function generateQ() {
-            if (gameState.isReview) {
-                exitMission();
-                return;
-            }
-            if (gameState.history.length >= MAX_QUESTIONS) {
-                exitMission();
-                return;
-            }
-            
-            // Queue safe pop
-            if (gameState.questionQueue.length === 0) {
-                 // Should not happen with new logic, but safe fallback: exit
-                 exitMission();
-                 return;
-            }
-
+            if (gameState.isReview || gameState.history.length >= MAX_QUESTIONS || gameState.questionQueue.length === 0) { exitMission(); return; }
             const qData = gameState.questionQueue.pop();
             gameState.history.push({ data: qData, solved: false, tries: 0 });
-            gameState.historyIndex = gameState.history.length - 1;
-            renderQ();
-            updateUI();
+            gameState.historyIndex = gameState.history.length - 1; renderQ(); updateUI();
         }
 
         function renderQ() {
             const q = gameState.history[gameState.historyIndex].data;
-            const box = document.getElementById('game-content');
             document.getElementById('question-text').innerHTML = formatQuestionText(q.q);
-            box.innerHTML = '';
+            const box = document.getElementById('game-content'); box.innerHTML = '';
             document.getElementById('check-btn').style.display = 'inline-block';
 
             if(q.type === 'M_ID' || q.type === 'M_WORD') {
                 box.innerHTML = `
-                    <div class="flex flex-row items-center justify-center gap-8 w-full">
-                         ${q.type === 'M_ID' ? `<div id="visual-container" class="flex flex-col items-center gap-4"></div>` : ''}
+                    <div class="flex flex-col md:flex-row items-center justify-center gap-6 w-full">
+                         ${q.type === 'M_ID' ? `<div id="visual-container" class="flex flex-col items-center gap-2 w-full"></div>` : ''}
                         <div class="mc-slot flex flex-col items-center bg-gray-800 p-4 border-4 border-gray-600">
-                            <label class="text-xs text-gray-400 mb-1">החלק (המונה)</label>
-                            <input id="in-n" type="number" class="mc-input w-24 mb-2" placeholder="מונה">
-                            <div class="fraction-divider w-24 h-1 bg-white"></div>
-                            <input id="in-d" type="number" class="mc-input w-24 mt-2" placeholder="מכנה" value="${q.type === 'M_WORD' ? '1' : ''}">
-                            <label class="text-xs text-gray-400 mt-1">השלם (המכנה)</label>
+                            <label class="text-xs text-gray-400 mb-1">מונה (חלק)</label>
+                            <input id="in-n" type="number" class="mc-input w-20 mb-2" placeholder="?">
+                            <div class="fraction-divider w-20 h-1 bg-white"></div>
+                            <input id="in-d" type="number" class="mc-input w-20 mt-2" placeholder="?" value="${q.type === 'M_WORD' ? '1' : ''}">
+                            <label class="text-xs text-gray-400 mt-1">מכנה (שלם)</label>
                         </div>
-                    </div>
-                `;
+                    </div>`;
                 if(q.type === 'M_ID') drawVisuals(q.n, q.d, q.theme || 'grass');
             } 
             else if(q.type === 'M_SORT') {
                 box.innerHTML = `
                     <div class="text-5xl text-white mb-4 font-bold text-center drop-shadow-md" dir="ltr">${q.n}/${q.d}</div>
-                    <div class="flex gap-4 justify-center">
-                        <button onclick="check('proper')" class="btn-mc btn-stone">קטן מ-1 (Stack)</button>
-                        <button onclick="check('improper')" class="btn-mc btn-stone">גדול/שווה ל-1</button>
-                    </div>
-                `;
+                    <div class="flex gap-4 justify-center flex-wrap">
+                        <button onclick="check('proper')" class="btn-mc btn-stone text-sm">קטן מ-1 (Stack)</button>
+                        <button onclick="check('improper')" class="btn-mc btn-stone text-sm">גדול/שווה ל-1</button>
+                    </div>`;
                 document.getElementById('check-btn').style.display = 'none';
             }
             else if(q.type === 'M_CMP') {
                 box.innerHTML = `
-                    <div class="flex items-center gap-4 text-3xl font-bold">
+                    <div class="flex items-center gap-4 text-2xl font-bold">
                          <div dir="ltr" class="bg-gray-700 p-2 border-2 border-black">${q.n1}/${q.d1}</div>
                          <div class="flex flex-col gap-2">
                             <button onclick="check('<')" class="btn-mc btn-stone text-xl">&lt;</button>
@@ -1449,29 +1053,21 @@
                             <button onclick="check('>')" class="btn-mc btn-stone text-xl">&gt;</button>
                          </div>
                          <div dir="ltr" class="bg-gray-700 p-2 border-2 border-black">${q.n2}/${q.d2}</div>
-                    </div>
-                `;
+                    </div>`;
                 document.getElementById('check-btn').style.display = 'none';
             }
             else if(q.type === 'E_SORT_4') {
                 box.innerHTML = `
                     <div class="grid grid-cols-2 gap-4 w-full max-w-md">
-                        <button onclick="check('verb')" class="btn-mc btn-redstone">Verb (פועל)</button>
-                        <button onclick="check('adj')" class="btn-mc btn-diamond">Adjective (תואר)</button>
-                        <button onclick="check('calendar')" class="btn-mc btn-gold">Calendar (זמן)</button>
-                        <button onclick="check('number')" class="btn-mc btn-stone">Number (מספר)</button>
-                    </div>
-                `;
+                        <button onclick="check('verb')" class="btn-mc btn-redstone text-sm">Verb (פועל)</button>
+                        <button onclick="check('adj')" class="btn-mc btn-diamond text-sm">Adjective (תואר)</button>
+                        <button onclick="check('calendar')" class="btn-mc btn-gold text-sm">Calendar (זמן)</button>
+                        <button onclick="check('number')" class="btn-mc btn-stone text-sm">Number (מספר)</button>
+                    </div>`;
                 document.getElementById('check-btn').style.display = 'none';
             }
             else if(q.type === 'E_TOBE') {
-                box.innerHTML = `
-                    <div class="flex gap-4 justify-center">
-                        <button onclick="check('am')" class="btn-mc btn-wood text-xl">am</button>
-                        <button onclick="check('is')" class="btn-mc btn-wood text-xl">is</button>
-                        <button onclick="check('are')" class="btn-mc btn-wood text-xl">are</button>
-                    </div>
-                `;
+                box.innerHTML = `<div class="flex gap-4 justify-center flex-wrap"><button onclick="check('am')" class="btn-mc btn-wood text-xl">am</button><button onclick="check('is')" class="btn-mc btn-wood text-xl">is</button><button onclick="check('are')" class="btn-mc btn-wood text-xl">are</button></div>`;
                 document.getElementById('check-btn').style.display = 'none';
             }
             else if(q.type === 'E_READ') {
@@ -1482,194 +1078,123 @@
         function drawVisuals(n, d, theme) {
             setTimeout(() => {
                 const container = document.getElementById('visual-container');
-                if(!container) return;
-                container.innerHTML = '';
-                if (d > 20) return; 
-
-                // Create the block row container
-                const row = document.createElement('div');
-                row.className = 'block-row';
-                
-                // Determine block texture
+                if(!container) return; container.innerHTML = ''; if (d > 20) return; 
+                const row = document.createElement('div'); row.className = 'block-row';
                 const blockUrl = THEME_BLOCKS[theme] || THEME_BLOCKS['grass'];
-
                 for(let i=0; i<d; i++) {
-                    const img = document.createElement('img');
-                    img.src = blockUrl;
-                    img.className = 'mc-block-img';
-                    
-                    if (i >= n) {
-                        // Empty part of the fraction (ghost block)
-                        img.classList.add('mc-block-ghost');
-                    }
+                    const img = document.createElement('img'); img.src = blockUrl; img.className = 'mc-block-img';
+                    if (i >= n) img.classList.add('mc-block-ghost');
                     row.appendChild(img);
                 }
                 container.appendChild(row);
-
-                // Add pie chart below
-                const pie = document.createElement('div');
-                pie.className = 'pie-chart';
+                const pie = document.createElement('div'); pie.className = 'pie-chart';
                 const deg = (n / d) * 360;
-                // Simple color mapping fallback
-                const colors = {
-                    grass: "#4A8F28", stone: "#7D7D7D", diamond: "#3C8DAB", 
-                    gold: "#F0A804", iron: "#E6E6E6", tnt: "#DB2E23", 
-                    wood: "#8F6942", emerald: "#17DD62", coal: "#333", cake: "#FFF"
-                };
+                const colors = { grass: "#4A8F28", stone: "#7D7D7D", diamond: "#3C8DAB", gold: "#F0A804", iron: "#E6E6E6", tnt: "#DB2E23", wood: "#8F6942", emerald: "#17DD62", coal: "#333", cake: "#FFF" };
                 const themeColor = colors[theme] || '#4A8F28';
-                
                 pie.style.background = `conic-gradient(${themeColor} 0deg ${deg}deg, #222 ${deg}deg 360deg)`;
                 pie.style.marginTop = "10px";
-                
                 const sliceDeg = 360 / d;
-                const overlay = document.createElement('div');
-                overlay.style.position = 'absolute';
-                overlay.style.top = '0'; overlay.style.left = '0';
-                overlay.style.width = '100%'; overlay.style.height = '100%';
-                overlay.style.borderRadius = '50%';
+                const overlay = document.createElement('div'); overlay.style.position = 'absolute'; overlay.style.top = '0'; overlay.style.left = '0'; overlay.style.width = '100%'; overlay.style.height = '100%'; overlay.style.borderRadius = '50%';
                 overlay.style.backgroundImage = `repeating-conic-gradient(transparent 0deg ${sliceDeg - 2}deg, rgba(255,255,255,0.3) ${sliceDeg - 2}deg ${sliceDeg}deg)`;
-                
-                pie.appendChild(overlay);
-                container.appendChild(pie);
+                pie.appendChild(overlay); container.appendChild(pie);
             }, 0);
         }
 
         window.checkAnswer = check = (val) => {
-            const item = gameState.history[gameState.historyIndex];
-            if(item.solved) return;
-            const q = item.data;
-            let correct = false;
+            const item = gameState.history[gameState.historyIndex]; if(item.solved) return;
+            const q = item.data; let correct = false;
 
             if(q.type === 'M_ID' || q.type === 'M_WORD') {
-                const n = parseInt(document.getElementById('in-n').value);
-                const d = parseInt(document.getElementById('in-d').value);
-                if (q.type === 'M_WORD') {
-                      if (n === q.ansN && d === q.ansD) correct = true;
-                      if (q.ansD === 8 && n === q.ansN && d === 1) correct = true; 
-                } else {
-                    correct = (n === q.n && d === q.d);
-                }
-            } 
-            else if (q.type.includes('SORT') || q.type === 'M_CMP' || q.type === 'E_TOBE') {
+                const n = parseInt(document.getElementById('in-n').value); const d = parseInt(document.getElementById('in-d').value);
+                correct = (q.type === 'M_WORD') ? ((n === q.ansN && d === q.ansD) || (q.ansD === 8 && n === q.ansN && d === 1)) : (n === q.n && d === q.d);
+            } else if (q.type.includes('SORT') || q.type === 'M_CMP' || q.type === 'E_TOBE') {
                 correct = (val === q.ans);
-                if (q.type === 'E_TOBE') {
-                    const qTextEl = document.getElementById('question-text');
-                    const fillClass = correct ? "filled-answer filled-correct" : "filled-answer filled-wrong";
-                    qTextEl.innerHTML = qTextEl.innerHTML.replace('___', `<span class="${fillClass}">${val}</span>`);
-                }
-            } 
-            else if (q.type === 'E_READ') {
-                const t = document.getElementById('in-text').value.trim().toLowerCase();
-                correct = t.includes(q.ans.toLowerCase());
+                if (q.type === 'E_TOBE') document.getElementById('question-text').innerHTML = document.getElementById('question-text').innerHTML.replace('___', `<span class="filled-answer ${correct ? "filled-correct" : "filled-wrong"}">${val}</span>`);
+            } else if (q.type === 'E_READ') {
+                correct = document.getElementById('in-text').value.trim().toLowerCase().includes(q.ans.toLowerCase());
             }
 
-            const fb = document.getElementById('feedback');
+            const fb = document.getElementById('feedback'); 
             fb.classList.remove('hidden');
             
             if(correct) {
-                gameState.score += 10;
-                gameState.missionScore += 10;
-                gameState.diamonds++;
-                item.solved = true;
-                updateUI();
+                gameState.score += 10; gameState.missionScore += 10; gameState.diamonds++;
+                item.solved = true; updateUI(); 
                 fb.innerHTML = "נכון מאוד! 💎";
-                fb.className = "mt-4 p-4 border-2 border-white text-center font-bold text-xl bg-green-700 text-white";
+                fb.className = "mt-4 p-3 border-2 border-white text-center font-bold text-lg flex-shrink-0 bg-green-600 text-white shadow-md rounded";
                 document.getElementById('check-btn').style.display = 'none'; 
-                
-                const skipBtn = document.getElementById('skip-btn');
-                skipBtn.textContent = "השאלה הבאה ➡";
-                skipBtn.classList.remove('btn-gold');
-                skipBtn.classList.add('btn-grass');
+                const skipBtn = document.getElementById('skip-btn'); skipBtn.textContent = "השאלה הבאה ➡"; skipBtn.classList.remove('btn-gold'); skipBtn.classList.add('btn-grass');
             } else {
-                item.tries++;
+                item.tries++; 
                 fb.innerHTML = "אופס! נסה שוב 🧟";
-                fb.className = "mt-4 p-4 border-2 border-white text-center font-bold text-xl bg-orange-600 text-white";
-                if(item.tries === 1) gameState.errors.push(q);
+                fb.className = "mt-4 p-3 border-2 border-white text-center font-bold text-lg flex-shrink-0 bg-orange-500 text-white shadow-md rounded";
+                if(item.tries === 1 && !gameState.errors.includes(q)) gameState.errors.push(q);
             }
         };
 
         function resetFeedback() {
-            document.getElementById('feedback').classList.add('hidden');
-            document.getElementById('check-btn').disabled = false;
+            document.getElementById('feedback').classList.add('hidden'); document.getElementById('check-btn').disabled = false;
             document.getElementById('check-btn').style.display = 'inline-block';
-            const skipBtn = document.getElementById('skip-btn');
-            skipBtn.textContent = "דלג ⏩";
-            skipBtn.classList.remove('btn-grass');
-            skipBtn.classList.add('btn-gold');
-
-            const curr = gameState.history[gameState.historyIndex];
-            if(curr && curr.solved) {
-                document.getElementById('check-btn').style.display = 'none'; 
-                document.getElementById('feedback').innerHTML = "כבר נפתר!";
-                document.getElementById('feedback').classList.remove('hidden');
-                skipBtn.textContent = "השאלה הבאה ➡";
-                skipBtn.classList.remove('btn-gold');
-                skipBtn.classList.add('btn-grass');
+            const skipBtn = document.getElementById('skip-btn'); skipBtn.textContent = "דלג ⏩"; skipBtn.classList.remove('btn-grass'); skipBtn.classList.add('btn-gold');
+            if(gameState.history[gameState.historyIndex].solved) {
+                document.getElementById('check-btn').style.display = 'none'; document.getElementById('feedback').innerHTML = "כבר נפתר!"; document.getElementById('feedback').classList.remove('hidden');
+                skipBtn.textContent = "השאלה הבאה ➡"; skipBtn.classList.remove('btn-gold'); skipBtn.classList.add('btn-grass');
             }
         }
         
         function updateUI() {
-            document.getElementById('score-display').textContent = gameState.score;
-            document.getElementById('diamonds-display').textContent = gameState.diamonds;
-            const current = gameState.historyIndex + 1;
-            const total = gameState.isReview ? gameState.history.length : MAX_QUESTIONS;
+            document.getElementById('score-display').textContent = gameState.score; document.getElementById('diamonds-display').textContent = gameState.diamonds;
+            const current = gameState.historyIndex + 1; const total = gameState.isReview ? gameState.history.length : MAX_QUESTIONS;
             document.getElementById('q-num').textContent = `${current} / ${total}`;
-            document.getElementById('mission-title').textContent = gameState.isReview ? "מבחן חוזר ♻️" : "משימה";
-            
-            // Progress Bar Update
-            const pct = Math.min(100, Math.round((current / total) * 100));
-            const bar = document.getElementById('progress-fill');
-            if(bar) bar.style.width = `${pct}%`;
+            document.getElementById('progress-fill').style.width = `${Math.min(100, Math.round((current / total) * 100))}%`;
         }
 
-        // --- THEMATIC QUESTION POOLS ---
+        // --- DATA POOLS ---
         let mathQ = {
             1: [
-                {q:"בתיבה יש 5 חפצים. 2 הם {iron}. ייצג את החלק של הברזל כשבר:", n:2, d:5, type:"M_ID", theme: "iron"},
-                {q:"ייצג את החלק של ה-{diamond} מתוך הסך הכל (4):", n:3, d:4, type:"M_ID", theme: "diamond"},
-                {q:"חצי מהבלוקים הם {wood}. ייצג את השבר:", n:1, d:2, type:"M_ID", theme: "wood"},
-                {q:"אספת 3 מתוך 7 מטילי {gold}. כתוב את השבר המתאים:", n:3, d:7, type:"M_ID", theme: "gold"},
-                {q:"המונה (החלק) הוא 3 {emerald}, המכנה (השלם) הוא 4. מהו השבר?", n:3, d:4, type:"M_ID", theme: "emerald"},
-                {q:"ייצג את החלק של ה-{tnt} (מתוך 8 בלוקים בסך הכל):", n:3, d:8, type:"M_ID", theme: "tnt"},
-                // New Icon Questions
-                {q:"יש לך 6 כיכרות {bread}. אכלת 4. מהו השבר?", n:4, d:6, type:"M_ID", theme: "bread"},
-                {q:"המונה הוא 2 {bucket_water}, המכנה הוא 3. מה השבר?", n:2, d:3, type:"M_ID", theme: "bucket_water"},
+                {q:"בתיבה יש 5 כלים. 2 הם {pickaxe_iron}. ייצג את החלק של מכוש הברזל:", n:2, d:5, type:"M_ID", theme: "pickaxe"},
+                {q:"ייצג את החלק של ה-{sword_diamond} מתוך הסך הכל (4):", n:3, d:4, type:"M_ID", theme: "diamond"},
+                {q:"חצי מהבלוקים הם {planks_oak}. ייצג את השבר:", n:1, d:2, type:"M_ID", theme: "planks_oak"},
+                {q:"אספת 3 מתוך 7 {ore_gold}. כתוב את השבר:", n:3, d:7, type:"M_ID", theme: "ore_gold"},
+                {q:"המונה הוא 3 {emerald}, המכנה הוא 4. מהו השבר?", n:3, d:4, type:"M_ID", theme: "emerald"},
+                {q:"ייצג את החלק של ה-{tnt} (מתוך 8 בלוקים):", n:3, d:8, type:"M_ID", theme: "tnt"},
+                {q:"יש לך 6 {bread}. אכלת 4. מהו השבר?", n:4, d:6, type:"M_ID", theme: "bread"},
+                {q:"המונה הוא 2 {bucket_water}, המכנה הוא 3.", n:2, d:3, type:"M_ID", theme: "bucket_water"},
                 {q:"אספת 5 {cookie} מתוך 8. כתוב את השבר:", n:5, d:8, type:"M_ID", theme: "cookie"},
-                {q:"דגת 10 דגים ({fish}). 3 ברחו. איזה חלק נשאר?", n:7, d:10, type:"M_ID", theme: "fish"},
+                {q:"דגת 10 {fish}. 3 ברחו. איזה חלק נשאר?", n:7, d:10, type:"M_ID", theme: "fish"},
                 {q:"בשביל עוגה צריך 3 {bucket_milk}. יש לך 1. איזה חלק יש לך?", n:1, d:3, type:"M_ID", theme: "bucket_milk"},
                 {q:"בישלת 4 {cooked_porkchop} מתוך 5. מה השבר?", n:4, d:5, type:"M_ID", theme: "cooked_porkchop"},
-                // New Tools Math
-                {q:"למעדר {hoe} יש 50 שימושים. השתמשת ב-1/5. כמה שימושים נותרו?", n:40, d:1, type:"M_WORD", theme: "hoe"},
-                {q:"בתיבה יש 4 כלים. 1 מהם הוא {pickaxe}. מה החלק שלו?", n:1, d:4, type:"M_ID", theme: "pickaxe"},
+                {q:"למעדר {hoe_wood} יש 50 שימושים. השתמשת ב-1/5. כמה נותרו?", n:40, d:1, type:"M_WORD", theme: "hoe"},
+                {q:"בתיבה 4 כלים. 1 מהם הוא {pickaxe_diamond}. מה החלק?", n:1, d:4, type:"M_ID", theme: "pickaxe"},
                 {q:"כמה זה חצי מ-10 {clock}?", n:5, d:1, type:"M_WORD", theme: "clock"}
             ],
             2: [
-                {q: "האם 5/2 ({diamond}) הוא שבר גדול מ-1?", ans: "improper", n:5, d:2, type:"M_SORT"},
-                {q: "האם 10/12 (חיים) הוא שבר קטן מ-1?", ans: "proper", n:10, d:12, type:"M_SORT"},
-                {q: "האם 7/7 (שריון מלא) נחשב גדול/שווה ל-1?", ans: "improper", n:7, d:7, type:"M_SORT"},
-                {q: "מיין: 4/3 דליים של לבה ({bucket_lava})", ans: "improper", n:4, d:3, type:"M_SORT", theme: "bucket_lava"},
+                {q: "האם 5/2 ({sword_gold}) הוא שבר גדול מ-1?", ans: "improper", n:5, d:2, type:"M_SORT", theme: "gold"},
+                {q: "האם 10/12 ({apple}) הוא שבר קטן מ-1?", ans: "proper", n:10, d:12, type:"M_SORT"},
+                {q: "האם 7/7 ({chestplate_iron}) נחשב גדול/שווה ל-1?", ans: "improper", n:7, d:7, type:"M_SORT"},
+                {q: "מיין: 4/3 {bucket_lava}", ans: "improper", n:4, d:3, type:"M_SORT", theme: "bucket_lava"},
                 {q: "מיין: 1/4 מפה", ans: "proper", n:1, d:4, type:"M_SORT"},
                 {q: "האם 8/5 {porkchop} זה יותר מ-1?", ans: "improper", n:8, d:5, type:"M_SORT", theme: "porkchop"}
             ],
             3: [
-                {q: "חיבור: 2/9 {emerald} + 5/9 {emerald} + ? = 10/9 {emerald}", n:3, d:9, type:"M_ID", theme: "emerald"}, 
+                {q: "חיבור: 2/9 {emerald} + 5/9 {emerald} + ? = 10/9", n:3, d:9, type:"M_ID", theme: "emerald"}, 
                 {q: "בישול: 3/5 {coal} + 4/5 {coal} = ?", n:7, d:5, type:"M_ID", theme: "coal"},
-                {q: "סטיב אכל 2/8 מה-{cake}, אלכס אכלה 1/8. כמה אכלו יחד?", n:3, d:8, type:"M_ID", theme: "cake"},
+                {q: "סטיב אכל 2/8 מה-{cake}, אלכס 1/8. כמה יחד?", n:3, d:8, type:"M_ID", theme: "cake"},
                 {q: "Crafting: 2/6 {redstone} + 3/6 {redstone} = ?", n:5, d:6, type:"M_ID", theme: "redstone"}
             ],
             4: [
-                {q: "מה שווה יותר? 1/7 {diamond} מול 1/5 {diamond}", n1:1, d1:7, n2:1, d2:5, ans:"<", type:"M_CMP"},
-                {q: "מי חזק יותר? 4/3 {iron} מול 3/4 {iron}", n1:4, d1:3, n2:3, d2:4, ans:">", type:"M_CMP"},
+                {q: "מה שווה יותר? 1/7 {diamond} מול 1/5", n1:1, d1:7, n2:1, d2:5, ans:"<", type:"M_CMP"},
+                {q: "מי חזק יותר? 4/3 {axe_iron} מול 3/4", n1:4, d1:3, n2:3, d2:4, ans:">", type:"M_CMP"},
                 {q: "השווה מלאי: 3/4 מול 3/5", n1:3, d1:4, n2:3, d2:5, ans:">", type:"M_CMP"},
                 {q: "השווה: 2/7 מול 4/9", n1:2, d1:7, n2:4, d2:9, ans:"<", type:"M_CMP"},
-                {q: "האם 2/6 {gold} שווה ל-1/3 {gold}?", n1:2, d1:6, n2:1, d2:3, ans:"=", type:"M_CMP"}
+                {q: "האם 2/6 {gold} שווה ל-1/3?", n1:2, d1:6, n2:1, d2:3, ans:"=", type:"M_CMP"}
             ],
             5: [
                 {q: "בספרייה יש 3 מדפים. באמצעי 12 ספרים. בעליון 2/3 מהאמצעי. כמה ספרים בעליון?", ansN:8, ansD:1, type:"M_WORD"},
-                {q: "בתיבה 20 בלוקים. 3/10 הם {emerald}. כמה אמרלדים יש?", ansN:6, ansD:1, type:"M_WORD"},
-                {q: "בתיבה 20 בלוקים. 3/10 הם {wood} והשאר {stone}. כמה אבנים יש?", ansN:14, ansD:1, type:"M_WORD"},
-                {q: "{cake} מחולקת ל-8. סטיב אכל 2, אלכס אכלה 1. כמה פרוסות נשארו?", ansN:5, ansD:1, type:"M_WORD"},
-                {q: "יש לך 9 {carrot}. נתת 1/3 לחזיר. כמה גזרים נתת?", ansN:3, ansD:1, type:"M_WORD", theme: "carrot"},
+                {q: "בתיבה 20 בלוקים. 3/10 הם {emerald}. כמה אמרלדים?", ansN:6, ansD:1, type:"M_WORD"},
+                {q: "בתיבה 20 בלוקים. 3/10 הם {wood} והשאר {stone}. כמה אבנים?", ansN:14, ansD:1, type:"M_WORD"},
+                {q: "{cake} מחולקת ל-8. סטיב אכל 2, אלכס 1. כמה נשאר?", ansN:5, ansD:1, type:"M_WORD"},
+                {q: "יש לך 9 {carrot}. נתת 1/3 לחזיר. כמה נתת?", ansN:3, ansD:1, type:"M_WORD", theme: "carrot"},
                 {q: "אלכס מצאה 12 {melon}. היא אכלה 1/4. כמה אכלה?", ansN:3, ansD:1, type:"M_WORD", theme: "melon"}
             ]
         };
@@ -1679,14 +1204,13 @@
                 {q: "{crafting} Craft (ליצור)", ans: "verb", type:"E_SORT_4"},
                 {q: "Twenty {diamond}s", ans: "number", type:"E_SORT_4"},
                 {q: "May (Month)", ans: "calendar", type:"E_SORT_4"},
-                {q: "Strong ({armor})", ans: "adj", type:"E_SORT_4"},
+                {q: "Strong ({chestplate_diamond})", ans: "adj", type:"E_SORT_4"},
                 {q: "Thirty {creeper}s", ans: "number", type:"E_SORT_4"},
                 {q: "Tall ({enderman})", ans: "adj", type:"E_SORT_4"},
                 {q: "Climb ({ladder})", ans: "verb", type:"E_SORT_4"},
                 {q: "August", ans: "calendar", type:"E_SORT_4"},
                 {q: "Give ({apple})", ans: "verb", type:"E_SORT_4"},
                 {q: "Fast ({potion})", ans: "adj", type:"E_SORT_4"},
-                // New Icon Vocab
                 {q: "Eat ({bread})", ans: "verb", type:"E_SORT_4"},
                 {q: "Shoot ({bow})", ans: "verb", type:"E_SORT_4"},
                 {q: "Sweet ({cookie})", ans: "adj", type:"E_SORT_4"},
@@ -1695,12 +1219,11 @@
                 {q: "Catch a {fish}", ans: "verb", type:"E_SORT_4"},
                 {q: "Drink {bucket_milk}", ans: "verb", type:"E_SORT_4"},
                 {q: "Tasty {cooked_porkchop}", ans: "adj", type:"E_SORT_4"},
-                // New Tools Vocab
-                {q: "Use a {pickaxe} to mine", ans: "verb", type:"E_SORT_4"},
-                {q: "Dig with a {shovel}", ans: "verb", type:"E_SORT_4"},
+                {q: "Use a {pickaxe_diamond} to mine", ans: "verb", type:"E_SORT_4"},
+                {q: "Dig with a {shovel_iron}", ans: "verb", type:"E_SORT_4"},
                 {q: "Find north with a {compass}", ans: "verb", type:"E_SORT_4"},
                 {q: "Check time on the {clock}", ans: "verb", type:"E_SORT_4"},
-                {q: "Farm with a {hoe}", ans: "verb", type:"E_SORT_4"}
+                {q: "Farm with a {hoe_stone}", ans: "verb", type:"E_SORT_4"}
             ],
             102: [
                 {q: "Steve ___ mining now.", ans: "is", type:"E_TOBE"},
@@ -1708,7 +1231,7 @@
                 {q: "They ___ playing on the server.", ans: "are", type:"E_TOBE"},
                 {q: "You ___ a griefer!", ans: "are", type:"E_TOBE"},
                 {q: "The {zombie} ___ in the cave.", ans: "is", type:"E_TOBE"},
-                {q: "She ___ crafting a {sword}.", ans: "is", type:"E_TOBE"}
+                {q: "She ___ crafting a {sword_iron}.", ans: "is", type:"E_TOBE"}
             ],
             103: [
                 {q: "How old is Steve? (Text says 10)", ans: "10", type:"E_READ"},
