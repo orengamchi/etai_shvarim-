@@ -29,9 +29,10 @@
             justify-content: center;
             image-rendering: pixelated;
             background-color: #87CEEB; 
+            transition: background-color 5s ease;
         }
 
-        /* --- 3D WORLD BACKGROUND --- */
+        /* --- 3D WORLD BACKGROUND & ENVIRONMENT --- */
         #world-layer {
             position: absolute;
             top: 0; left: 0; width: 100%; height: 100%;
@@ -39,16 +40,63 @@
             perspective: 600px;
             overflow: hidden;
             background: linear-gradient(to bottom, #87CEEB 0%, #C8EAFF 60%, #E0F7FA 100%);
+            transition: background 5s ease;
         }
 
+        /* Night Mode Styles */
+        #world-layer.night {
+            background: linear-gradient(to bottom, #000033 0%, #191970 60%, #483D8B 100%);
+        }
+        #world-layer.storm {
+            background: linear-gradient(to bottom, #2C3E50 0%, #4A5866 100%);
+        }
+
+        /* Celestial Bodies */
         .sun {
             position: absolute;
             top: 10%; left: 10%; width: 80px; height: 80px;
             background-color: #FFF500;
             box-shadow: 4px 4px 0 rgba(0,0,0,0.1);
             z-index: 1;
-            animation: sunFloat 10s ease-in-out infinite alternate;
+            transition: top 5s ease, left 5s ease, opacity 2s ease;
         }
+        
+        .moon {
+            position: absolute;
+            top: 110%; left: 80%; width: 60px; height: 60px;
+            background-color: #F4F6F0;
+            box-shadow: 0 0 10px rgba(255,255,255,0.5);
+            z-index: 1;
+            transition: top 5s ease, opacity 2s ease;
+        }
+        .moon::after {
+            content: ''; position: absolute; top: 10px; left: 10px; width: 10px; height: 10px; background: #DDD; opacity: 0.5;
+        }
+
+        .star {
+            position: absolute;
+            width: 4px; height: 4px;
+            background: white;
+            opacity: 0;
+            transition: opacity 3s ease;
+        }
+        #world-layer.night .star { opacity: 0.8; animation: twinkle 2s infinite alternate; }
+
+        @keyframes twinkle { 0% { opacity: 0.3; } 100% { opacity: 1; } }
+
+        /* Weather: Rain */
+        .rain-drop {
+            position: absolute;
+            width: 2px; height: 15px;
+            background: rgba(200, 200, 255, 0.6);
+            top: -20px;
+            z-index: 5;
+            animation: fall 0.5s linear infinite;
+            display: none;
+        }
+        #world-layer.raining .rain-drop { display: block; }
+
+        @keyframes fall { to { transform: translateY(105vh); } }
 
         .cloud {
             position: absolute;
@@ -57,15 +105,21 @@
             z-index: 2;
             box-shadow: 8px 8px 0 rgba(0,0,0,0.05);
             animation: moveCloud linear infinite;
+            transition: background-color 3s;
         }
+        #world-layer.storm .cloud { background-color: #555; box-shadow: 4px 4px 0 #222; }
+        
         .cloud::after {
             content: ''; position: absolute; top: -20px; left: 20px;
-            width: 80px; height: 20px; background-color: rgba(255,255,255,0.8);
+            width: 80px; height: 20px; background-color: inherit;
         }
 
         .ground-plane {
             position: absolute;
-            bottom: -200px; left: -50%; width: 200%; height: 100%;
+            bottom: -200px;
+            left: -100%; /* Wider to cover screens */
+            width: 300%; /* Increased width */
+            height: 100%;
             background-color: #5C9338;
             background-image: 
                 linear-gradient(rgba(0,0,0,0.1) 2px, transparent 2px),
@@ -76,11 +130,48 @@
             z-index: 3;
             animation: moveGround 4s linear infinite;
             box-shadow: inset 0 100px 100px rgba(135, 206, 235, 0.5);
+            transition: box-shadow 5s ease, background-color 5s ease;
+        }
+        #world-layer.night .ground-plane { 
+            background-color: #2E4B1C; 
+            box-shadow: inset 0 100px 100px rgba(0, 0, 50, 0.8);
         }
 
         @keyframes moveGround { 0% { background-position: 0 0; } 100% { background-position: 0 60px; } }
         @keyframes moveCloud { 0% { transform: translateX(110vw); } 100% { transform: translateX(-20vw); } }
         @keyframes sunFloat { 0% { transform: translateY(0); } 100% { transform: translateY(-10px); } }
+
+        /* --- TOWER SCENERY STYLES --- */
+        #scenery-layer {
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            pointer-events: none; z-index: 4;
+            transform-style: preserve-3d;
+            perspective: 600px;
+            overflow: hidden;
+        }
+        
+        .tower-stack {
+            position: absolute;
+            display: flex;
+            flex-direction: column-reverse; /* Stack upwards */
+            align-items: center;
+            transform-origin: center bottom;
+            animation: moveTower 10s linear infinite;
+        }
+        
+        .tower-block {
+            width: 50px; height: 50px;
+            background-image: url('https://static.wikia.nocookie.net/minecraft_gamepedia/images/c/c5/Grass_Block_JE7_BE6.png');
+            background-size: cover;
+            image-rendering: pixelated;
+            box-shadow: 2px 2px 5px rgba(0,0,0,0.3);
+        }
+
+        @keyframes moveTower {
+            0% { top: 40%; opacity: 0; transform: scale(0.2); }
+            10% { opacity: 1; }
+            100% { top: 120%; opacity: 1; transform: scale(1.5); }
+        }
 
         /* --- CINEMATIC INTRO STYLES --- */
         #cinematic-overlay {
@@ -88,30 +179,67 @@
             background-color: #000; z-index: 9999;
             display: flex; align-items: center; justify-content: center;
             overflow: hidden;
+            flex-direction: column;
         }
         
         .lightning-flash {
             position: absolute; top: 0; left: 0; width: 100%; height: 100%;
             background-color: #FFF; opacity: 0; pointer-events: none;
+            z-index: 100;
         }
 
-        /* Enderman Run Animation */
+        /* --- ENDERMAN ANIMATION (SILHOUETTE) --- */
         .intro-enderman {
             position: relative; width: 120px; height: 200px;
             transform-origin: center bottom;
-            animation: runToCamera 3s ease-in forwards;
+            opacity: 0; 
+            z-index: 101; /* Above lightning */
         }
         
-        @keyframes runToCamera {
-            0% { transform: scale(0.2) translateY(50px); opacity: 0; }
-            10% { opacity: 1; }
-            100% { transform: scale(8) translateY(20px); } /* Zoom in massively */
+        /* Silhouette styling: Pure black parts */
+        .intro-enderman .ender-head,
+        .intro-enderman .ender-body,
+        .intro-enderman .ender-arm,
+        .intro-enderman .ender-leg {
+            background-color: #000 !important;
+            box-shadow: 0 0 5px rgba(0,0,0,0.5); /* Subtle shadow for depth */
         }
 
+        /* Glowing eyes for silhouette */
+        .intro-enderman .ender-eye {
+            background: #D57DFF !important;
+            box-shadow: 0 0 15px #D57DFF, 0 0 5px #FFF !important;
+        }
+
+        /* The running animation class */
+        .intro-running {
+            animation: runToCamera 3s ease-in forwards;
+        }
+
+        @keyframes runToCamera {
+            0% { transform: scale(0.2) translateY(50px); opacity: 0; }
+            5% { opacity: 1; }
+            100% { transform: scale(12) translateY(80px); opacity: 1; }
+        }
+
+        /* Intense Strobe Lightning */
         @keyframes flashLightning {
-            0%, 10%, 25%, 100% { opacity: 0; }
-            5%, 20% { opacity: 0.8; } /* Flash bursts */
-            15% { opacity: 0.3; }
+            0% { opacity: 0; }
+            2% { opacity: 1; }
+            4% { opacity: 0; }
+            6% { opacity: 0.5; }
+            8% { opacity: 0; }
+            20% { opacity: 0; }
+            22% { opacity: 0.8; }
+            24% { opacity: 0; }
+            50% { opacity: 0; }
+            52% { opacity: 1; }
+            54% { opacity: 0.2; }
+            56% { opacity: 0; }
+            80% { opacity: 0; }
+            82% { opacity: 0.6; }
+            84% { opacity: 0; }
+            100% { opacity: 0; }
         }
 
         @keyframes aggressiveShake {
@@ -130,6 +258,39 @@
         @keyframes runArm { from { transform: rotate(45deg); } to { transform: rotate(-45deg); } }
         @keyframes runLeg { from { transform: translateY(-5px); } to { transform: translateY(5px); } }
 
+        /* --- FLASHING 3D TITLE STYLES --- */
+        .mega-title {
+            font-size: 8rem; 
+            line-height: 1;
+            text-align: center;
+            font-weight: 900; 
+            color: #FFD700;
+            font-family: 'Impact', 'Arial Black', sans-serif; /* CHANGED FONT TO IMPACT */
+            letter-spacing: 4px;
+            -webkit-text-stroke: 4px #000;
+            text-shadow: 
+                0 1px 0 #c6a300,
+                0 2px 0 #c6a300,
+                0 3px 0 #c6a300,
+                0 4px 0 #c6a300,
+                0 5px 0 #c6a300, 
+                0 6px 0 #c6a300,
+                0 7px 0 #c6a300,
+                0 8px 0 #c6a300,
+                0 9px 0 #000, 
+                0 10px 0 #000,
+                10px 10px 20px rgba(0,0,0,0.5);
+            animation: flashColors 0.3s infinite alternate;
+            transform: perspective(500px) rotateX(15deg);
+        }
+
+        @keyframes flashColors {
+            0% { color: #FF0000; text-shadow: 0 8px 0 #8B0000; }
+            25% { color: #00FF00; text-shadow: 0 8px 0 #006400; }
+            50% { color: #0000FF; text-shadow: 0 8px 0 #00008B; }
+            75% { color: #FFFF00; text-shadow: 0 8px 0 #8B8B00; }
+            100% { color: #FF00FF; text-shadow: 0 8px 0 #8B008B; }
+        }
 
         /* --- UI Overlay --- */
         .ui-layer {
@@ -190,20 +351,67 @@
             text-shadow: 2px 2px 0 #000; box-shadow: inset 0 0 10px #000;
         }
 
-        /* Thematic Elements */
-        .grid-bar { display: flex; height: 40px; border: 3px solid #000; background: #333; margin-top: 1rem; }
-        .grid-cell { flex: 1; border-left: 1px solid rgba(0,0,0,0.5); position: relative; }
-        .grid-cell:first-child { border-left: none; }
+        /* --- VISUAL AIDS (BLOCKS) --- */
+        .block-row {
+            display: flex; gap: 4px; justify-content: center; align-items: flex-end;
+            background: rgba(0,0,0,0.2);
+            padding: 10px;
+            border-radius: 4px;
+            border: 2px solid rgba(0,0,0,0.5);
+            min-height: 60px;
+        }
         
-        .theme-grass { background-color: #4A8F28; box-shadow: inset 0 3px 0 #6ABD45; }
-        .theme-dirt { background-color: #866043; box-shadow: inset 0 0 10px rgba(0,0,0,0.3); }
-        .theme-stone { background-color: #7D7D7D; box-shadow: inset 0 0 5px #555; }
-        .theme-diamond { background-color: #3C8DAB; box-shadow: inset 2px 2px 5px #8CF4E2; border: 1px solid #285E73; }
-        .theme-gold { background-color: #F0A804; box-shadow: inset 2px 2px 0 #FFFFAA; }
-        .theme-iron { background-color: #E6E6E6; box-shadow: inset -2px -2px 5px #999; }
-        .theme-tnt { background: repeating-linear-gradient(45deg, #DB2E23, #DB2E23 10px, #FFF 10px, #FFF 20px); border: 1px solid #000; }
-        .theme-wood { background-color: #8F6942; border: 1px solid #5C4033; background-image: linear-gradient(0deg, rgba(0,0,0,0.1) 50%, transparent 50%); background-size: 4px 4px;}
-        .empty-cell { background-color: #222; opacity: 0.5; }
+        .mc-block-img {
+            width: 48px; height: 48px;
+            image-rendering: pixelated;
+            filter: drop-shadow(4px 4px 0px rgba(0,0,0,0.5));
+            transition: transform 0.2s;
+        }
+        .mc-block-img:hover { transform: translateY(-5px); }
+        .mc-block-ghost {
+            opacity: 0.3;
+            filter: grayscale(100%) brightness(0.5);
+        }
+        
+        .pie-chart {
+            width: 100px; height: 100px;
+            border-radius: 50%;
+            border: 4px solid #5C4033; /* Wood border */
+            background-color: #222;
+            position: relative;
+            box-shadow: 2px 2px 5px rgba(0,0,0,0.5);
+        }
+        
+        /* Themes Colors for JS injection */
+        :root {
+            --color-grass: #4A8F28;
+            --color-stone: #7D7D7D;
+            --color-diamond: #3C8DAB;
+            --color-gold: #F0A804;
+            --color-iron: #E6E6E6;
+            --color-tnt: #DB2E23;
+            --color-wood: #8F6942;
+            --color-emerald: #17DD62;
+            --color-coal: #333;
+            --color-cake: #FFF;
+        }
+
+        /* Fill in Blank Styles */
+        .filled-answer {
+            display: inline-block;
+            padding: 0 8px;
+            border-bottom-width: 4px;
+            font-weight: bold;
+            transition: all 0.3s ease;
+        }
+        .filled-correct {
+            color: #4ade80; /* green-400 */
+            border-color: #4ade80;
+        }
+        .filled-wrong {
+            color: #fb923c; /* orange-400 */
+            border-color: #fb923c;
+        }
 
         /* Enderman Base Styles */
         .enderman-scene { position: relative; width: 120px; height: 200px; margin: 0 auto 20px; }
@@ -224,6 +432,58 @@
 
         .hidden { display: none !important; }
         .fraction-divider { height: 4px; background: #FFF; margin: 5px 0; box-shadow: 1px 1px 0 #000; }
+
+        /* Icon Integration in Text */
+        .inline-icon {
+            display: inline-block;
+            vertical-align: middle;
+            width: 32px;
+            height: 32px;
+            margin: 0 4px;
+            filter: drop-shadow(2px 2px 0 rgba(0,0,0,0.5));
+        }
+
+        /* Error Log Table Styles */
+        .log-table {
+            border-collapse: separate;
+            border-spacing: 0;
+            width: 100%;
+        }
+        .log-table th {
+            background-color: #2d2d2d;
+            border-bottom: 2px solid #555;
+            padding: 8px;
+        }
+        .log-table td {
+            padding: 8px;
+            border-bottom: 1px solid #444;
+        }
+        .log-table tr:nth-child(even) {
+            background-color: rgba(255, 255, 255, 0.05);
+        }
+        
+        /* Wizard / Spellbook Styles */
+        .wizard-section {
+            background-color: #3b2e25;
+            border: 2px solid #5e4b35;
+            padding: 10px;
+            margin-bottom: 10px;
+            border-radius: 4px;
+        }
+        .wizard-title {
+            color: #d1b588;
+            font-weight: bold;
+            font-size: 1.1rem;
+            margin-bottom: 5px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .wizard-content {
+            color: #ddd;
+            font-size: 0.95rem;
+            line-height: 1.4;
+        }
     </style>
 </head>
 <body>
@@ -245,26 +505,44 @@
             </button>
         </div>
         
+        <!-- INTRO PART 1: Enderman -->
         <div id="intro-animation" class="hidden w-full h-full relative flex items-center justify-center">
             <div class="lightning-flash"></div>
             
-            <!-- Custom Enderman for Intro -->
-            <div class="intro-enderman anim-running">
-                <div class="ender-head"><div class="ender-eye eye-l" style="background:#FFF; box-shadow:0 0 10px #FFF"></div><div class="ender-eye eye-r" style="background:#FFF; box-shadow:0 0 10px #FFF"></div></div>
+            <div id="scary-enderman" class="intro-enderman anim-running">
+                <div class="ender-head"><div class="ender-eye eye-l"></div><div class="ender-eye eye-r"></div></div>
                 <div class="ender-body"></div>
                 <div class="ender-arm arm-l"></div><div class="ender-arm arm-r"></div>
                 <div class="ender-leg leg-l"></div><div class="ender-leg leg-r"></div>
+            </div>
+        </div>
+
+        <!-- INTRO PART 2: Title -->
+        <div id="intro-title" class="hidden w-full h-full relative flex items-center justify-center">
+            <div class="mega-title">
+                שיעורי<br>בית
             </div>
         </div>
     </div>
 
     <!-- 3D WORLD LAYER -->
     <div id="world-layer">
+        <!-- Celestial Bodies -->
         <div class="sun"></div>
+        <div class="moon"></div>
+        <div id="stars-container"></div>
+        
+        <!-- Clouds -->
         <div class="cloud" style="top: 15%; left: -20%; animation-duration: 25s;"></div>
         <div class="cloud" style="top: 25%; left: -40%; animation-duration: 35s; transform: scale(0.8);"></div>
         <div class="cloud" style="top: 10%; left: -10%; animation-duration: 45s; transform: scale(1.2);"></div>
+        
+        <!-- Rain -->
+        <div id="rain-container"></div>
+        
+        <!-- Ground and Towers -->
         <div class="ground-plane"></div>
+        <div id="scenery-layer"></div>
     </div>
 
     <!-- UI LAYER -->
@@ -279,13 +557,13 @@
                     <button id="music-btn" onclick="toggleMusic()" class="btn-mc btn-stone">🎵 נגן</button>
                 </div>
                 
-                <div class="flex gap-4 bg-gray-800 px-4 py-2 border-2 border-white rounded text-white">
-                    <span>⭐ ניקוד: <span id="score-display" class="text-yellow-400">0</span></span>
-                    <span>💎 יהלומים: <span id="diamonds-display" class="text-cyan-400">0</span></span>
+                <div class="flex gap-4 bg-gray-800 px-4 py-2 border-2 border-white rounded text-white shadow-lg">
+                    <span class="border-l border-white pl-4 ml-2">⭐ ציון כללי: <span id="score-display" class="text-yellow-400 font-bold text-xl">0</span></span>
+                    <span>💎 יהלומים: <span id="diamonds-display" class="text-cyan-400 font-bold text-xl">0</span></span>
                 </div>
                 
                 <div>
-                     <select id="difficulty-select" class="mc-input text-sm p-1" onchange="changeDifficulty()">
+                      <select id="difficulty-select" class="mc-input text-sm p-1" onchange="changeDifficulty()">
                         <option value="easy">🌲 קל</option>
                         <option value="medium" selected>⛏️ בינוני</option>
                         <option value="hard">🗡️ קשה</option>
@@ -325,7 +603,7 @@
                     </button>
                 </div>
                 <div class="mt-8">
-                    <button onclick="showTips()" class="btn-mc btn-obsidian text-purple-300 border-purple-500">💡 ספר הכשפים (טיפים)</button>
+                    <button onclick="showTips()" class="btn-mc btn-obsidian text-purple-300 border-purple-500">📖 ספר המכשף (מדריך)</button>
                 </div>
             </div>
 
@@ -339,9 +617,6 @@
                     <button onclick="startMission(4)" class="btn-mc btn-stone text-lg text-right px-4">4. ⚖️ מאזני הכוח (השוואה)</button>
                     <button onclick="startMission(5)" class="btn-mc btn-gold text-lg text-right px-4">5. 🍲 הכפר והמשק (מילוליות)</button>
                 </div>
-                <div class="text-center mt-6">
-                    <button onclick="showView('subject-menu-view')" class="btn-mc btn-red">חזרה ללובי</button>
-                </div>
             </div>
 
             <!-- 3. English Menu -->
@@ -352,16 +627,25 @@
                     <button onclick="startMission(102)" class="btn-mc btn-stone text-lg text-right px-4">E2. ✅ Steve's Actions (To Be)</button>
                     <button onclick="startMission(103)" class="btn-mc btn-stone text-lg text-right px-4">E3. 🧭 Steve's Journal (Reading)</button>
                 </div>
-                <div class="text-center mt-6">
-                    <button onclick="showView('subject-menu-view')" class="btn-mc btn-red">חזרה ללובי</button>
-                </div>
             </div>
 
             <!-- 4. Game Arena -->
             <div id="game-view" class="view hidden">
                 <div class="flex justify-between items-center mb-4">
                     <h3 id="mission-title" class="text-xl font-bold text-gray-700">משימה</h3>
-                    <span class="text-gray-600 font-bold">שאלה <span id="q-num">1</span></span>
+                    <div class="flex gap-2 items-center">
+                        <button onclick="showContextualHelp()" class="btn-mc btn-obsidian text-sm p-2 border-purple-500" title="רמז">
+                            <img src="https://static.wikia.nocookie.net/minecraft_gamepedia/images/7/7b/Book_JE2_BE2.png" width="20" height="20">
+                        </button>
+                        <span class="text-gray-600 font-bold">שאלה <span id="q-num">1</span></span>
+                    </div>
+                </div>
+
+                <!-- Progress Bar -->
+                <div class="w-full mb-6">
+                    <div class="w-full h-6 bg-gray-900 border-2 border-black relative overflow-hidden">
+                        <div id="progress-fill" class="h-full bg-green-500 transition-all duration-500 ease-out" style="width: 0%; box-shadow: inset 0 -2px 0 rgba(0,0,0,0.3);"></div>
+                    </div>
                 </div>
 
                 <div class="question-box">
@@ -379,20 +663,26 @@
                 </div>
 
                 <div id="feedback" class="hidden mt-4 p-4 border-2 border-white text-center font-bold text-xl" style="background:#333;"></div>
-                
-                 <div class="text-center mt-6">
-                    <button onclick="showView('subject-menu-view')" class="btn-mc btn-red text-sm">חזרה ללובי (ביטול משימה)</button>
-                </div>
             </div>
 
             <!-- 5. Summary -->
             <div id="summary-view" class="view hidden text-center p-8">
                 <h2 class="text-4xl mb-6 text-green-600" style="text-shadow: 2px 2px #FFF">סיום כרייה!</h2>
-                <div class="bg-gray-300 border-4 border-black p-6 mb-6 inline-block">
-                    <p class="text-2xl text-black">ניקוד סופי: <span id="final-score">0</span></p>
-                    <p class="text-2xl text-black">יהלומים: <span id="final-diamonds">0</span> 💎</p>
+                <div class="bg-gray-300 border-4 border-black p-6 mb-6 inline-block min-w-[300px]">
+                    <div class="text-4xl mb-4 font-bold text-blue-800">ציון משימה: <span id="final-grade">100%</span></div>
+                    <div class="text-xl text-black border-t border-gray-500 pt-2">
+                        <p>סה"כ ניקוד כללי: <span id="final-score">0</span></p>
+                        <p>סה"כ יהלומים: <span id="final-diamonds">0</span> 💎</p>
+                    </div>
                 </div>
                 
+                <!-- Direct Next Mission Button -->
+                <div id="next-level-container" class="hidden mb-6">
+                    <button onclick="goToNextMission()" class="btn-mc btn-grass w-full py-4 text-2xl shadow-xl animate-bounce">
+                        המשימה הבאה ⏭️
+                    </button>
+                </div>
+
                 <div id="retake-section" class="hidden mb-6">
                     <p class="text-red-600 font-bold mb-2 text-xl">נמצאו פריטים פגומים (טעויות)!</p>
                     <button onclick="startReview()" class="btn-mc btn-obsidian text-purple-300 border-purple-500 w-full py-4 text-xl animate-pulse">
@@ -403,7 +693,7 @@
                 <div class="text-right mb-6">
                     <h3 class="text-xl mb-2 text-gray-700">יומן חפירות (טעויות):</h3>
                     <div class="bg-gray-800 border-2 border-white p-2 h-48 overflow-y-auto">
-                        <table class="w-full text-sm text-white">
+                        <table class="log-table text-sm text-white">
                             <thead><tr class="border-b border-gray-600"><th>שאלה</th><th>תשובה נכונה</th></tr></thead>
                             <tbody id="error-log-body"></tbody>
                         </table>
@@ -417,16 +707,19 @@
         </div>
     </div>
 
-    <!-- Tips Modal -->
+    <!-- Tips Modal (Spellbook) -->
     <div id="tips-modal" class="hidden fixed inset-0 bg-black bg-opacity-90 flex items-center justify-center z-50">
-        <div class="bg-gray-300 border-4 border-black p-6 max-w-md w-full relative text-black">
-            <button onclick="hideTips()" class="absolute top-2 left-2 font-bold text-red-600 text-xl">X</button>
-            <h3 class="text-2xl font-bold text-center mb-4">מדריך ההישרדות</h3>
-            <ul class="list-disc pr-6 space-y-2 text-lg">
-                <li><strong>סבלנות:</strong> קרא את השאלות בזהירות.</li>
-                <li><strong>אנגלית:</strong> השתמש ברמזים מהטקסט.</li>
-                <li><strong>שברים:</strong> המכנה הוא סך הבלוקים.</li>
-            </ul>
+        <div class="bg-gray-200 border-4 border-black p-6 max-w-2xl w-full relative text-black h-[80vh] overflow-y-auto" style="background: #c6c6c6;">
+            <button onclick="hideTips()" class="absolute top-2 left-2 font-bold text-red-600 text-xl btn-mc btn-stone">X סגור</button>
+            
+            <div class="text-center mb-6">
+                <h3 class="text-3xl font-bold mb-2" style="color: #3f3f3f; text-shadow: 2px 2px #fff;">📖 ספר המכשף</h3>
+                <p class="text-gray-700 font-bold">מדריך אסטרטגי לפתרון בעיות</p>
+            </div>
+
+            <div id="tips-content">
+                <!-- Dynamic Content Will Be Injected Here -->
+            </div>
         </div>
     </div>
 
@@ -474,32 +767,380 @@
             history: [],
             historyIndex: -1,
             errors: [], // Stores full question objects for retake
-            isReview: false
+            isReview: false,
+            missionScore: 0,
+            questionQueue: [] // Queue for shuffling unique questions
         };
+
+        // --- ICON SYSTEM ---
+        const ITEM_ICONS = {
+            // Original Set
+            diamond: "https://static.wikia.nocookie.net/minecraft_gamepedia/images/9/90/Diamond_JE3_BE3.png",
+            gold: "https://static.wikia.nocookie.net/minecraft_gamepedia/images/3/3a/Gold_Ingot_JE4_BE2.png",
+            iron: "https://static.wikia.nocookie.net/minecraft_gamepedia/images/f/fc/Iron_Ingot_JE3_BE2.png",
+            emerald: "https://static.wikia.nocookie.net/minecraft_gamepedia/images/2/26/Emerald_JE3_BE3.png",
+            tnt: "https://static.wikia.nocookie.net/minecraft_gamepedia/images/7/72/TNT_JE3.png",
+            wood: "https://static.wikia.nocookie.net/minecraft_gamepedia/images/a/a2/Oak_Log_JE5_BE3.png",
+            stone: "https://static.wikia.nocookie.net/minecraft_gamepedia/images/d/d4/Cobblestone_JE5_BE3.png",
+            coal: "https://static.wikia.nocookie.net/minecraft_gamepedia/images/2/29/Coal_JE4_BE3.png",
+            apple: "https://static.wikia.nocookie.net/minecraft_gamepedia/images/a/af/Apple_JE3_BE3.png",
+            cake: "https://static.wikia.nocookie.net/minecraft_gamepedia/images/c/c2/Cake_JE4.png",
+            potion: "https://static.wikia.nocookie.net/minecraft_gamepedia/images/9/9f/Potion_of_Swiftness_JE2_BE2.png",
+            sword: "https://static.wikia.nocookie.net/minecraft_gamepedia/images/8/8e/Iron_Sword_JE2_BE2.png",
+            armor: "https://static.wikia.nocookie.net/minecraft_gamepedia/images/2/22/Diamond_Chestplate_JE3_BE3.png",
+            creeper: "https://static.wikia.nocookie.net/minecraft_gamepedia/images/6/6d/Creeper_Head_JE3_BE3.png",
+            enderman: "https://static.wikia.nocookie.net/minecraft_gamepedia/images/a/a0/Enderman_Head_8-bit.png",
+            zombie: "https://static.wikia.nocookie.net/minecraft_gamepedia/images/f/f8/Zombie_Head_JE3_BE3.png",
+            ladder: "https://static.wikia.nocookie.net/minecraft_gamepedia/images/a/a3/Ladder_JE3_BE2.png",
+            crafting: "https://static.wikia.nocookie.net/minecraft_gamepedia/images/b/b5/Crafting_Table_JE4_BE3.png",
+            
+            // --- NEW: Tools ---
+            pickaxe: "https://static.wikia.nocookie.net/minecraft_gamepedia/images/c/c4/Diamond_Pickaxe_JE3_BE3.png",
+            axe: "https://static.wikia.nocookie.net/minecraft_gamepedia/images/4/47/Diamond_Axe_JE3_BE3.png",
+            shovel: "https://static.wikia.nocookie.net/minecraft_gamepedia/images/1/14/Diamond_Shovel_JE3_BE3.png",
+            hoe: "https://static.wikia.nocookie.net/minecraft_gamepedia/images/9/90/Diamond_Hoe_JE3_BE3.png",
+            fishing_rod: "https://static.wikia.nocookie.net/minecraft_gamepedia/images/7/7f/Fishing_Rod_JE2_BE2.png",
+            clock: "https://static.wikia.nocookie.net/minecraft_gamepedia/images/6/62/Clock_JE3.gif",
+            compass: "https://static.wikia.nocookie.net/minecraft_gamepedia/images/f/f6/Compass_JE3_BE3.gif",
+            shears: "https://static.wikia.nocookie.net/minecraft_gamepedia/images/3/30/Shears_JE2_BE2.png",
+            flint_and_steel: "https://static.wikia.nocookie.net/minecraft_gamepedia/images/2/2f/Flint_and_Steel_JE4_BE2.png",
+
+            // --- NEW: Armor ---
+            helmet: "https://static.wikia.nocookie.net/minecraft_gamepedia/images/2/22/Iron_Helmet_JE2_BE2.png",
+            chestplate: "https://static.wikia.nocookie.net/minecraft_gamepedia/images/7/7c/Iron_Chestplate_JE2_BE2.png",
+            leggings: "https://static.wikia.nocookie.net/minecraft_gamepedia/images/3/3d/Iron_Leggings_JE2_BE2.png",
+            boots: "https://static.wikia.nocookie.net/minecraft_gamepedia/images/8/80/Iron_Boots_JE2_BE2.png",
+
+            // --- NEW: Food ---
+            bread: "https://static.wikia.nocookie.net/minecraft_gamepedia/images/9/94/Bread_JE2_BE2.png",
+            carrot: "https://static.wikia.nocookie.net/minecraft_gamepedia/images/4/4e/Carrot_JE2_BE2.png",
+            porkchop: "https://static.wikia.nocookie.net/minecraft_gamepedia/images/3/30/Raw_Porkchop_JE2_BE2.png",
+            cooked_porkchop: "https://static.wikia.nocookie.net/minecraft_gamepedia/images/3/3d/Cooked_Porkchop_JE2_BE2.png",
+            fish: "https://static.wikia.nocookie.net/minecraft_gamepedia/images/1/18/Cod_JE3_BE2.png",
+            cookie: "https://static.wikia.nocookie.net/minecraft_gamepedia/images/b/b3/Cookie_JE2_BE2.png",
+            melon: "https://static.wikia.nocookie.net/minecraft_gamepedia/images/d/db/Melon_Slice_JE2_BE2.png",
+            steak: "https://static.wikia.nocookie.net/minecraft_gamepedia/images/8/8e/Steak_JE4_BE3.png",
+            chicken_cooked: "https://static.wikia.nocookie.net/minecraft_gamepedia/images/6/62/Cooked_Chicken_JE3_BE3.png",
+            potato: "https://static.wikia.nocookie.net/minecraft_gamepedia/images/c/c3/Potato_JE3_BE3.png",
+            pumpkin_pie: "https://static.wikia.nocookie.net/minecraft_gamepedia/images/6/6c/Pumpkin_Pie_JE2_BE2.png",
+            golden_apple: "https://static.wikia.nocookie.net/minecraft_gamepedia/images/6/64/Golden_Apple_JE2_BE2.png",
+
+            // --- NEW: Resources ---
+            stick: "https://static.wikia.nocookie.net/minecraft_gamepedia/images/7/7a/Stick_JE1_BE1.png",
+            bone: "https://static.wikia.nocookie.net/minecraft_gamepedia/images/9/9d/Bone_JE3_BE2.png",
+            string: "https://static.wikia.nocookie.net/minecraft_gamepedia/images/9/9d/String_JE1_BE1.png",
+            feather: "https://static.wikia.nocookie.net/minecraft_gamepedia/images/9/91/Feather_JE1_BE1.png",
+            wheat: "https://static.wikia.nocookie.net/minecraft_gamepedia/images/e/e2/Wheat_JE2_BE2.png",
+            seeds: "https://static.wikia.nocookie.net/minecraft_gamepedia/images/4/4b/Wheat_Seeds_JE1_BE1.png",
+            leather: "https://static.wikia.nocookie.net/minecraft_gamepedia/images/1/10/Leather_JE1_BE1.png",
+            paper: "https://static.wikia.nocookie.net/minecraft_gamepedia/images/9/97/Paper_JE1_BE1.png",
+            book: "https://static.wikia.nocookie.net/minecraft_gamepedia/images/7/7b/Book_JE2_BE2.png",
+            brick: "https://static.wikia.nocookie.net/minecraft_gamepedia/images/5/53/Brick_JE2_BE2.png",
+            glowstone_dust: "https://static.wikia.nocookie.net/minecraft_gamepedia/images/8/87/Glowstone_Dust_JE2_BE2.png",
+            redstone: "https://static.wikia.nocookie.net/minecraft_gamepedia/images/d/d5/Redstone_Dust_JE2_BE2.png",
+
+            // --- NEW: Transport & Misc ---
+            minecart: "https://static.wikia.nocookie.net/minecraft_gamepedia/images/e/ea/Minecart_JE4_BE2.png",
+            boat: "https://static.wikia.nocookie.net/minecraft_gamepedia/images/c/c4/Oak_Boat_JE4_BE2.png",
+            saddle: "https://static.wikia.nocookie.net/minecraft_gamepedia/images/2/23/Saddle_JE2_BE2.png",
+            ender_pearl: "https://static.wikia.nocookie.net/minecraft_gamepedia/images/f/f6/Ender_Pearl_JE3_BE2.png",
+            eye_of_ender: "https://static.wikia.nocookie.net/minecraft_gamepedia/images/7/7a/Eye_of_Ender_JE2_BE2.png",
+            music_disc: "https://static.wikia.nocookie.net/minecraft_gamepedia/images/6/65/Music_Disc_13_JE2_BE2.png",
+            bucket_water: "https://static.wikia.nocookie.net/minecraft_gamepedia/images/c/c5/Water_Bucket_JE2_BE2.png",
+            bucket_lava: "https://static.wikia.nocookie.net/minecraft_gamepedia/images/2/27/Lava_Bucket_JE2_BE2.png",
+            bucket_milk: "https://static.wikia.nocookie.net/minecraft_gamepedia/images/2/22/Milk_Bucket_JE2_BE2.png",
+            
+            // --- NEW: Weaponry (Bow/Arrow) ---
+            bow: "https://static.wikia.nocookie.net/minecraft_gamepedia/images/a/a5/Bow_JE2_BE1.png",
+            arrow: "https://static.wikia.nocookie.net/minecraft_gamepedia/images/4/4e/Arrow_JE2_BE1.png"
+        };
+        
+        // 3D Blocks/Items for the visualizer
+        const THEME_BLOCKS = {
+            grass: "https://static.wikia.nocookie.net/minecraft_gamepedia/images/c/c5/Grass_Block_JE7_BE6.png",
+            stone: "https://static.wikia.nocookie.net/minecraft_gamepedia/images/d/d4/Cobblestone_JE5_BE3.png",
+            diamond: "https://static.wikia.nocookie.net/minecraft_gamepedia/images/c/c8/Block_of_Diamond_JE5_BE3.png",
+            gold: "https://static.wikia.nocookie.net/minecraft_gamepedia/images/9/93/Block_of_Gold_JE6_BE3.png",
+            iron: "https://static.wikia.nocookie.net/minecraft_gamepedia/images/3/36/Block_of_Iron_JE4_BE3.png",
+            tnt: "https://static.wikia.nocookie.net/minecraft_gamepedia/images/7/72/TNT_JE3.png",
+            wood: "https://static.wikia.nocookie.net/minecraft_gamepedia/images/a/a2/Oak_Log_JE5_BE3.png",
+            emerald: "https://static.wikia.nocookie.net/minecraft_gamepedia/images/0/0b/Block_of_Emerald_JE4_BE3.png",
+            coal: "https://static.wikia.nocookie.net/minecraft_gamepedia/images/a/a3/Block_of_Coal_JE3_BE2.png",
+            cake: "https://static.wikia.nocookie.net/minecraft_gamepedia/images/c/c2/Cake_JE4.png",
+            // New items for visualizer
+            bread: "https://static.wikia.nocookie.net/minecraft_gamepedia/images/9/94/Bread_JE2_BE2.png",
+            cookie: "https://static.wikia.nocookie.net/minecraft_gamepedia/images/b/b3/Cookie_JE2_BE2.png",
+            redstone: "https://static.wikia.nocookie.net/minecraft_gamepedia/images/d/d5/Redstone_Dust_JE2_BE2.png",
+            porkchop: "https://static.wikia.nocookie.net/minecraft_gamepedia/images/3/30/Raw_Porkchop_JE2_BE2.png",
+            cooked_porkchop: "https://static.wikia.nocookie.net/minecraft_gamepedia/images/3/3d/Cooked_Porkchop_JE2_BE2.png",
+            bucket_water: "https://static.wikia.nocookie.net/minecraft_gamepedia/images/c/c5/Water_Bucket_JE2_BE2.png",
+            bucket_lava: "https://static.wikia.nocookie.net/minecraft_gamepedia/images/2/27/Lava_Bucket_JE2_BE2.png",
+            bucket_milk: "https://static.wikia.nocookie.net/minecraft_gamepedia/images/2/22/Milk_Bucket_JE2_BE2.png",
+            fish: "https://static.wikia.nocookie.net/minecraft_gamepedia/images/1/18/Cod_JE3_BE2.png",
+            carrot: "https://static.wikia.nocookie.net/minecraft_gamepedia/images/4/4e/Carrot_JE2_BE2.png",
+            melon: "https://static.wikia.nocookie.net/minecraft_gamepedia/images/d/db/Melon_Slice_JE2_BE2.png",
+            pickaxe: "https://static.wikia.nocookie.net/minecraft_gamepedia/images/c/c4/Diamond_Pickaxe_JE3_BE3.png",
+            axe: "https://static.wikia.nocookie.net/minecraft_gamepedia/images/4/47/Diamond_Axe_JE3_BE3.png",
+            shovel: "https://static.wikia.nocookie.net/minecraft_gamepedia/images/1/14/Diamond_Shovel_JE3_BE3.png",
+            hoe: "https://static.wikia.nocookie.net/minecraft_gamepedia/images/9/90/Diamond_Hoe_JE3_BE3.png",
+            fishing_rod: "https://static.wikia.nocookie.net/minecraft_gamepedia/images/7/7f/Fishing_Rod_JE2_BE2.png",
+            clock: "https://static.wikia.nocookie.net/minecraft_gamepedia/images/6/62/Clock_JE3.gif",
+            compass: "https://static.wikia.nocookie.net/minecraft_gamepedia/images/f/f6/Compass_JE3_BE3.gif"
+        };
+
+        const ANSWER_DISPLAY_MAP = {
+            "proper": "קטן מ-1",
+            "improper": "גדול מ-1",
+            "verb": "פועל (Verb)",
+            "adj": "תואר (Adjective)",
+            "calendar": "זמן (Calendar)",
+            "number": "מספר (Number)",
+            "am": "am", "is": "is", "are": "are",
+            "<": "< (קטן מ)", ">": "> (גדול מ)", "=": "= (שווה)"
+        };
+
+        // --- NEW: Contextual Help Logic ---
+        const HINTS = {
+            "M_ID": `
+                <div class="wizard-section">
+                    <div class="wizard-title"><span class="text-2xl">🔢</span> זיהוי שברים</div>
+                    <div class="wizard-content">
+                        <p>כדי למצוא את השבר:</p>
+                        <ul class="list-disc pr-5">
+                            <li><strong>המונה (למעלה):</strong> ספור כמה פריטים <u>מלאים</u> או צבעוניים אתה רואה.</li>
+                            <li><strong>המכנה (למטה):</strong> ספור את <u>כל</u> הפריטים בשורה (גם השקופים/אפורים).</li>
+                        </ul>
+                    </div>
+                </div>`,
+            "M_WORD": `
+                <div class="wizard-section">
+                    <div class="wizard-title"><span class="text-2xl">📜</span> בעיה מילולית</div>
+                    <div class="wizard-content">
+                        <p>חפש מילים חשובות:</p>
+                        <ul class="list-disc pr-5">
+                            <li>"נשארו" / "הלך לאיבוד" = תרגיל חיסור (-).</li>
+                            <li>"סך הכל" / "יחד" = תרגיל חיבור (+).</li>
+                            <li>"חלק מ..." = כפל (למשל: 1/4 מ-12 זה 12 לחלק ל-4).</li>
+                        </ul>
+                    </div>
+                </div>`,
+            "M_SORT": `
+                <div class="wizard-section">
+                    <div class="wizard-title"><span class="text-2xl">⚖️</span> סוגי שברים</div>
+                    <div class="wizard-content">
+                        <ul class="list-disc pr-5">
+                            <li><strong>קטן מ-1 (Proper):</strong> המונה (למעלה) קטן מהמכנה (למטה).</li>
+                            <li><strong>גדול/שווה ל-1 (Improper):</strong> המונה גדול או שווה למכנה.</li>
+                        </ul>
+                    </div>
+                </div>`,
+            "M_CMP": `
+                <div class="wizard-section">
+                    <div class="wizard-title"><span class="text-2xl">🆚</span> השוואת שברים</div>
+                    <div class="wizard-content">
+                        <p>השתמש בשיטת הכפל בהצלבה:</p>
+                        <p>הכפל את המונה של צד ימין במכנה של צד שמאל, וההפך. המספר הגדול יותר מנצח!</p>
+                    </div>
+                </div>`,
+            "E_SORT_4": `
+                <div class="wizard-section">
+                    <div class="wizard-title"><span class="text-2xl">🔤</span> חלקי הדיבור</div>
+                    <div class="wizard-content">
+                        <ul class="list-disc pr-5">
+                            <li><strong>Verb (פועל):</strong> משהו שעושים (כמו Eat, Run, Craft).</li>
+                            <li><strong>Adjective (תואר):</strong> מתאר איך משהו נראה/מרגיש (Blue, Fast).</li>
+                            <li><strong>Number:</strong> מספר (One, Ten).</li>
+                            <li><strong>Calendar:</strong> זמן (Monday, May).</li>
+                        </ul>
+                    </div>
+                </div>`,
+            "E_TOBE": `
+                <div class="wizard-section">
+                    <div class="wizard-title"><span class="text-2xl">👤</span> הפועל To Be</div>
+                    <div class="wizard-content">
+                        <ul class="list-disc pr-5">
+                            <li><strong>Am:</strong> הולך תמיד עם <strong>I</strong>.</li>
+                            <li><strong>Is:</strong> הולך עם יחיד (He, She, It, Steve).</li>
+                            <li><strong>Are:</strong> הולך עם רבים (We, They, You).</li>
+                        </ul>
+                    </div>
+                </div>`,
+            "E_READ": `
+                <div class="wizard-section">
+                    <div class="wizard-title"><span class="text-2xl">📖</span> הבנת הנקרא</div>
+                    <div class="wizard-content">
+                        <p>חפש את מילת המפתח מהשאלה בתוך הטקסט (בסוגריים). התשובה נמצאת ממש לידה!</p>
+                    </div>
+                </div>`
+        };
+
+        function showContextualHelp() {
+            const currentQ = gameState.history[gameState.historyIndex]?.data;
+            const contentDiv = document.getElementById('tips-content');
+            
+            if (!currentQ) {
+                // Default view (all tips) if not in game or error
+                showTips(); 
+                return;
+            }
+
+            // Get specific hint based on type
+            const hintHTML = HINTS[currentQ.type] || "<p>אין רמז זמין לסוג שאלה זה.</p>";
+            
+            contentDiv.innerHTML = hintHTML;
+            document.getElementById('tips-modal').classList.remove('hidden');
+        }
+
+        function formatQuestionText(text) {
+            return text.replace(/\{(\w+)\}/g, (match, key) => {
+                const url = ITEM_ICONS[key.toLowerCase()];
+                if (url) return `<img src="${url}" class="inline-icon" alt="${key}">`;
+                return match; 
+            });
+        }
 
         const MUSIC = document.getElementById('bg-music');
         let musicPlaying = false;
 
+        // --- Environment System (Day/Night & Weather) ---
+        let envInterval;
+        let isNight = false;
+        
+        function initEnvironment() {
+            // Generate Stars
+            const starsContainer = document.getElementById('stars-container');
+            for(let i=0; i<50; i++) {
+                const star = document.createElement('div');
+                star.className = 'star';
+                star.style.top = Math.random() * 50 + '%';
+                star.style.left = Math.random() * 100 + '%';
+                star.style.animationDelay = Math.random() * 2 + 's';
+                starsContainer.appendChild(star);
+            }
+
+            // Generate Rain Drops
+            const rainContainer = document.getElementById('rain-container');
+            for(let i=0; i<50; i++) {
+                const drop = document.createElement('div');
+                drop.className = 'rain-drop';
+                drop.style.left = Math.random() * 100 + '%';
+                drop.style.animationDuration = (0.5 + Math.random() * 0.3) + 's';
+                drop.style.animationDelay = Math.random() * 2 + 's';
+                rainContainer.appendChild(drop);
+            }
+
+            // Start Cycle
+            if(envInterval) clearInterval(envInterval);
+            envInterval = setInterval(cycleEnvironment, 10000); // Check/Change every 10s for demo speed
+            
+            // Start scenery generator
+            setInterval(spawnScenery, 3000);
+        }
+
+        function cycleEnvironment() {
+            const world = document.getElementById('world-layer');
+            const sun = document.querySelector('.sun');
+            const moon = document.querySelector('.moon');
+            
+            // Toggle Day/Night
+            isNight = !isNight;
+            
+            if(isNight) {
+                world.classList.add('night');
+                sun.style.top = "110%"; // Sun sets
+                moon.style.top = "15%"; // Moon rises
+            } else {
+                world.classList.remove('night');
+                sun.style.top = "10%"; // Sun rises
+                moon.style.top = "110%"; // Moon sets
+            }
+
+            // Random Weather (30% chance of change)
+            if(Math.random() > 0.7) {
+                const weatherType = Math.random();
+                world.classList.remove('raining', 'storm');
+                
+                if(weatherType > 0.6) {
+                    // Storm
+                    world.classList.add('raining', 'storm');
+                    triggerLightning();
+                } else if (weatherType > 0.3) {
+                    // Just Rain
+                    world.classList.add('raining');
+                }
+            } else {
+                // Clear weather
+                world.classList.remove('raining', 'storm');
+            }
+        }
+
+        function triggerLightning() {
+            const flash = document.querySelector('.lightning-flash');
+            const thunder = document.getElementById('sfx-thunder');
+            
+            flash.style.animation = 'none';
+            flash.offsetHeight; /* trigger reflow */
+            flash.style.animation = "flashLightning 1s forwards";
+            
+            // Play sound only if interacted/allowed
+            thunder.currentTime = 0;
+            thunder.play().catch(()=>{});
+        }
+        
+        function spawnScenery() {
+            const container = document.getElementById('scenery-layer');
+            if(!container || document.hidden) return;
+            
+            const tower = document.createElement('div');
+            tower.className = 'tower-stack';
+            tower.style.left = Math.random() * 100 + '%';
+            
+            // Random height between 2 and 5 blocks
+            const height = Math.floor(Math.random() * 4) + 2;
+            for(let i=0; i<height; i++) {
+                const block = document.createElement('div');
+                block.className = 'tower-block';
+                tower.appendChild(block);
+            }
+            
+            container.appendChild(tower);
+            
+            // Remove after animation
+            setTimeout(() => {
+                if(tower.parentNode) tower.parentNode.removeChild(tower);
+            }, 10000);
+        }
+
         // --- Intro Logic ---
         function playIntro() {
             document.getElementById('start-btn-container').classList.add('hidden');
-            const intro = document.getElementById('intro-animation');
-            intro.classList.remove('hidden');
+            const introAnim = document.getElementById('intro-animation');
+            const introTitle = document.getElementById('intro-title');
             
-            // Play Thunder
+            // Step 1: Show Enderman
+            introAnim.classList.remove('hidden');
+            document.getElementById('scary-enderman').classList.add('intro-running');
+            
             const thunder = document.getElementById('sfx-thunder');
             thunder.volume = 0.8;
             thunder.play().catch(e=>console.log("Audio requires interaction"));
             
-            // Add Flash effect via CSS logic or just standard animation
             const flash = document.querySelector('.lightning-flash');
             flash.style.animation = "flashLightning 3s forwards";
 
-            // End animation after 3s
+            // Step 2: After 2.5s, Hide Enderman, Show Title
+            setTimeout(() => {
+                introAnim.classList.add('hidden');
+                introTitle.classList.remove('hidden');
+            }, 2500);
+
+            // Step 3: After another 3s (5.5s total), Start Game
             setTimeout(() => {
                 document.getElementById('cinematic-overlay').classList.add('hidden');
+                introTitle.classList.add('hidden'); // Reset for next time
                 document.getElementById('main-interface').classList.remove('hidden');
-            }, 3000);
+                initEnvironment(); // Start the world cycle
+            }, 5500);
         }
 
         window.toggleMusic = () => {
@@ -508,12 +1149,35 @@
             musicPlaying = !musicPlaying;
         };
 
-        window.showHome = () => { showView('intro-view'); gameState = { score: 0, diamonds: 0, difficulty: 'medium', missionId: 0, history: [], historyIndex: -1, errors: [], isReview: false }; updateUI(); };
+        window.showHome = () => { 
+            showView('intro-view'); 
+            gameState.missionId = 0; 
+            gameState.history = []; 
+            gameState.historyIndex = -1; 
+            gameState.errors = []; 
+            gameState.isReview = false; 
+            gameState.missionScore = 0;
+            gameState.questionQueue = [];
+            updateUI(); 
+        };
+        
         window.startGame = () => { if(!musicPlaying) toggleMusic(); showView('subject-menu-view'); };
         window.showView = (id) => { document.querySelectorAll('.view').forEach(v => v.classList.add('hidden')); document.getElementById(id).classList.remove('hidden'); };
         window.showMathMenu = () => showView('math-menu-view');
         window.showEnglishMenu = () => showView('english-menu-view');
-        window.showTips = () => document.getElementById('tips-modal').classList.remove('hidden');
+        
+        // Show general tips
+        window.showTips = () => {
+            const content = document.getElementById('tips-content');
+            // Populate with all hints for general view
+            let allHints = "";
+            for (const key in HINTS) {
+                allHints += HINTS[key];
+            }
+            content.innerHTML = allHints;
+            document.getElementById('tips-modal').classList.remove('hidden');
+        };
+
         window.hideTips = () => document.getElementById('tips-modal').classList.add('hidden');
         window.showAdminPanel = () => document.getElementById('admin-panel-modal').classList.remove('hidden');
         window.hideAdminPanel = () => document.getElementById('admin-panel-modal').classList.add('hidden');
@@ -530,11 +1194,29 @@
         window.clearCustomQuestions = () => { if(confirm("Are you sure you want to reset the world?")) location.reload(); };
         window.changeDifficulty = () => gameState.difficulty = document.getElementById('difficulty-select').value;
         
+        // --- QUEUE & SHUFFLE LOGIC ---
         window.startMission = (id) => {
             gameState.missionId = id;
             gameState.history = [];
             gameState.historyIndex = -1;
             gameState.isReview = false;
+            gameState.missionScore = 0;
+            
+            // Get original pool
+            let pool = (id < 100) ? mathQ[id] : engQ[id];
+            if (!pool) pool = [];
+            
+            // ** DUPLICATION LOGIC **
+            // If pool is smaller than MAX_QUESTIONS, duplicate content until it is enough
+            let fullPool = [...pool];
+            while (fullPool.length < MAX_QUESTIONS) {
+                fullPool = fullPool.concat(pool); // Append original questions again
+            }
+            
+            // Shuffle the expanded pool
+            gameState.questionQueue = fullPool.sort(() => Math.random() - 0.5);
+            
+            // Trim to exactly MAX_QUESTIONS if it got too big (optional, but clean)
             showView('game-view');
             window.nextQ();
         };
@@ -554,25 +1236,71 @@
             window.nextQ();
         };
 
+        // --- Next Mission Logic ---
+        function goToNextMission() {
+            // Logic to find next sequential ID
+            let nextId = gameState.missionId + 1;
+            
+            // Check if next exists in either pool
+            if (mathQ[nextId] || engQ[nextId]) {
+                startMission(nextId);
+            } else {
+                alert("אין עוד משימות ברצף זה! כל הכבוד!");
+                showHome();
+            }
+        }
+
         window.exitMission = () => {
             showView('summary-view');
+            
+            const totalQuestions = gameState.history.length;
+            const maxMissionScore = totalQuestions * 10;
+            let grade = 0;
+            if (maxMissionScore > 0) {
+                grade = Math.round((gameState.missionScore / maxMissionScore) * 100);
+            }
+
             document.getElementById('final-score').textContent = gameState.score;
+            document.getElementById('final-grade').textContent = grade + "%";
             document.getElementById('final-diamonds').textContent = gameState.diamonds;
             
             const tbody = document.getElementById('error-log-body');
             tbody.innerHTML = '';
             
+            // Check if next mission exists to show/hide button
+            const nextId = gameState.missionId + 1;
+            const hasNext = (mathQ[nextId] || engQ[nextId]);
+            const nextBtnContainer = document.getElementById('next-level-container');
+            
             if(gameState.errors.length === 0) {
                 document.getElementById('no-errors-text').classList.remove('hidden');
                 document.getElementById('retake-section').classList.add('hidden');
+                
+                // Only show next level if perfect score or just finished (optional logic: grade > 50)
+                if (hasNext) nextBtnContainer.classList.remove('hidden');
+                else nextBtnContainer.classList.add('hidden');
+
             } else {
                 document.getElementById('no-errors-text').classList.add('hidden');
                 document.getElementById('retake-section').classList.remove('hidden');
+                nextBtnContainer.classList.add('hidden'); // Force review if errors exist (Game Design choice)
                 
                 gameState.errors.forEach(q => { 
-                    let ansDisplay = q.ans || `${q.n}/${q.d}`;
-                    if(q.type === 'M_WORD') ansDisplay = `${q.ansN}/${q.ansD}`;
-                    tbody.innerHTML += `<tr><td>${q.q}</td><td dir="ltr" class="text-right">${ansDisplay}</td></tr>`; 
+                    // Determine display answer
+                    let ansDisplay = q.ans;
+                    if (ANSWER_DISPLAY_MAP[q.ans]) ansDisplay = ANSWER_DISPLAY_MAP[q.ans];
+                    
+                    if (!ansDisplay) { 
+                         // Fallback for fractions / custom number answers
+                         if(q.type === 'M_WORD') {
+                             // If the denominator is 1 (integer answer), just show the number
+                             if(q.ansD === 1) ansDisplay = `${q.ansN}`;
+                             else ansDisplay = `${q.ansN}/${q.ansD}`;
+                         }
+                         else ansDisplay = `${q.n}/${q.d}`;
+                    }
+
+                    tbody.innerHTML += `<tr><td>${formatQuestionText(q.q)}</td><td dir="ltr" class="text-right">${ansDisplay}</td></tr>`; 
                 });
             }
         };
@@ -581,121 +1309,66 @@
             if(gameState.historyIndex < gameState.history.length - 1) { 
                 gameState.historyIndex++; 
                 renderQ(); 
+                updateUI(); // Ensure UI updates on history navigation
             } 
-            else if (gameState.isReview || gameState.history.length >= MAX_QUESTIONS) {
-                exitMission();
-            }
             else { 
                 generateQ(); 
             }
             resetFeedback();
         };
 
-        window.prevQ = () => { if(gameState.historyIndex > 0) { gameState.historyIndex--; renderQ(); resetFeedback(); } };
+        window.prevQ = () => { 
+            if(gameState.historyIndex > 0) { 
+                gameState.historyIndex--; 
+                renderQ(); 
+                updateUI(); // Ensure UI updates on history navigation
+                resetFeedback(); 
+            } 
+        };
+        
         window.skipQ = () => { 
-            if(gameState.isReview) window.nextQ();
-            else { generateQ(); resetFeedback(); }
-        }
+            if (!gameState.isReview) {
+                 // ** UPDATED SKIP LOGIC **
+                 // Mark current question as error if it wasn't solved
+                 const currItem = gameState.history[gameState.historyIndex];
+                 if (!currItem.solved) {
+                     // Check if already in errors to avoid duplicates? 
+                     // Actually, if we are here, we are moving past it unsolved.
+                     // The item.tries might be 0.
+                     // We add the DATA to errors list for retake.
+                     // We check if it's already there (e.g. user tried once, failed, then skipped)
+                     const alreadyError = gameState.errors.some(e => e === currItem.data);
+                     if (!alreadyError) {
+                         gameState.errors.push(currItem.data);
+                     }
+                 }
 
-        function resetFeedback() {
-            document.getElementById('feedback').classList.add('hidden');
-            document.getElementById('check-btn').disabled = false;
-            const curr = gameState.history[gameState.historyIndex];
-            if(curr && curr.solved) {
-                document.getElementById('check-btn').disabled = true;
-                document.getElementById('feedback').innerHTML = "כבר נפתר!";
-                document.getElementById('feedback').classList.remove('hidden');
+                 if (gameState.history.length >= MAX_QUESTIONS) { 
+                      exitMission();
+                      return;
+                 }
             }
+            window.nextQ();
         }
-        function updateUI() {
-            document.getElementById('score-display').textContent = gameState.score;
-            document.getElementById('diamonds-display').textContent = gameState.diamonds;
-            const current = gameState.historyIndex + 1;
-            const total = gameState.isReview ? gameState.history.length : MAX_QUESTIONS;
-            document.getElementById('q-num').textContent = `${current} / ${total}`;
-            document.getElementById('mission-title').textContent = gameState.isReview ? "מבחן חוזר ♻️" : "משימה";
-        }
-
-        // --- THEMATIC QUESTION POOLS ---
-        let mathQ = {
-            1: [
-                {q:"בתיבה יש 5 חפצים. 2 הם מטילי ברזל (Iron Ingots). מה השבר?", n:2, d:5, type:"M_ID", theme: "iron"},
-                {q:"בנה שבר: 3 מתוך 4 יהלומים (Diamonds)", n:3, d:4, type:"M_ID", theme: "diamond"},
-                {q:"חצי מהבלוקים הם עץ (Oak Wood). בנה את השבר:", n:1, d:2, type:"M_ID", theme: "wood"},
-                {q:"אספת 3 מתוך 7 מטילי זהב (Gold Ingots). ייצג זאת:", n:3, d:7, type:"M_ID", theme: "gold"},
-                {q:"המונה שלי 3 (Creeper heads), המכנה 4. מי אני?", n:3, d:4, type:"M_ID", theme: "grass"},
-                {q:"בנה שבר: 3 מתוך 8 בלוקים של TNT", n:3, d:8, type:"M_ID", theme: "tnt"}
-            ],
-            2: [
-                {q: "האם 5/2 (מכושים) הוא שבר גדול מ-1?", ans: "improper", n:5, d:2, type:"M_SORT"},
-                {q: "האם 10/12 (לבבות חיים) הוא שבר קטן מ-1?", ans: "proper", n:10, d:12, type:"M_SORT"},
-                {q: "האם 7/7 (שריון מלא) נחשב גדול/שווה ל-1?", ans: "improper", n:7, d:7, type:"M_SORT"},
-                {q: "מיין: 4/3 דליים של לבה", ans: "improper", n:4, d:3, type:"M_SORT"},
-                {q: "מיין: 1/4 מפה", ans: "proper", n:1, d:4, type:"M_SORT"}
-            ],
-            3: [
-                {q: "חיבור משאבים: 2/9 אמרלד + 5/9 אמרלד + 3/9 אמרלד = ?", n:10, d:9, type:"M_ID", theme: "grass"}, 
-                {q: "בישול: 3/5 פחם + 4/5 פחם = ?", n:7, d:5, type:"M_ID", theme: "stone"},
-                {q: "סטיב אכל 2/8 מהעוגה, אלכס אכלה 1/8. כמה אכלו יחד?", n:3, d:8, type:"M_ID", theme: "gold"}
-            ],
-            4: [
-                {q: "מה שווה יותר? 1/7 יהלום מול 1/5 יהלום", n1:1, d1:7, n2:1, d2:5, ans:"<", type:"M_CMP"},
-                {q: "מי חזק יותר? 4/3 חרב ברזל מול 3/4 חרב ברזל", n1:4, d1:3, n2:3, d2:4, ans:">", type:"M_CMP"},
-                {q: "השווה מלאי: 3/4 מול 3/5", n1:3, d1:4, n2:3, d2:5, ans:">", type:"M_CMP"},
-                {q: "השווה: 2/7 מול 4/9", n1:2, d1:7, n2:4, d2:9, ans:"<", type:"M_CMP"},
-                {q: "האם 2/6 זהב שווה ל-1/3 זהב?", n1:2, d1:6, n2:1, d2:3, ans:"=", type:"M_CMP"}
-            ],
-            5: [
-                {q: "בספרייה בכפר יש 3 מדפים. באמצעי 12 ספרים מכושפים. בעליון 2/3 מהאמצעי. כמה ספרים בעליון?", ansN:8, ansD:1, type:"M_WORD"},
-                {q: "בתיבה 20 בלוקים. 3/10 הם צמר ירוק (Green Wool). כמה בלוקים ירוקים יש?", ansN:6, ansD:1, type:"M_WORD"},
-                {q: "בתיבה 20 בלוקים. 3/10 הם צמר ירוק והשאר צמר כחול (Blue Wool). כמה כחולים?", ansN:14, ansD:1, type:"M_WORD"},
-                {q: "עוגת דלעת (Pumpkin Pie) מחולקת ל-8. סטיב אכל 2, אלכס אכלה 1. כמה נשאר לחזיר?", ansN:5, ansD:1, type:"M_WORD"}
-            ]
-        };
-
-        let engQ = {
-            101: [
-                {q: "Craft (ליצור)", ans: "verb", type:"E_SORT_4"},
-                {q: "Twenty Diamonds", ans: "number", type:"E_SORT_4"},
-                {q: "May (Month)", ans: "calendar", type:"E_SORT_4"},
-                {q: "Strong (Armor)", ans: "adj", type:"E_SORT_4"},
-                {q: "Thirty Creepers", ans: "number", type:"E_SORT_4"},
-                {q: "Tall (Enderman)", ans: "adj", type:"E_SORT_4"},
-                {q: "Climb (Ladder)", ans: "verb", type:"E_SORT_4"},
-                {q: "August", ans: "calendar", type:"E_SORT_4"},
-                {q: "Give (Item)", ans: "verb", type:"E_SORT_4"},
-                {q: "Fast (Potion)", ans: "adj", type:"E_SORT_4"}
-            ],
-            102: [
-                {q: "Steve ___ mining now.", ans: "is", type:"E_TOBE"},
-                {q: "I ___ a builder.", ans: "am", type:"E_TOBE"},
-                {q: "They ___ playing on the server.", ans: "are", type:"E_TOBE"},
-                {q: "You ___ a griefer!", ans: "are", type:"E_TOBE"},
-                {q: "The Zombie ___ in the cave.", ans: "is", type:"E_TOBE"},
-                {q: "She ___ crafting a sword.", ans: "is", type:"E_TOBE"}
-            ],
-            103: [
-                {q: "How old is Steve? (Text says 10)", ans: "10", type:"E_READ"},
-                {q: "Steve's birthday is in which month? (June)", ans: "june", type:"E_READ"},
-                {q: "What is Steve's hobby? (Building)", ans: "building", type:"E_READ"},
-                {q: "Who is Steve's best friend? (Alex)", ans: "alex", type:"E_READ"},
-                {q: "Alex likes to play ___.", ans: "spleef", type:"E_READ"} 
-            ]
-        };
 
         function generateQ() {
-            const mId = gameState.missionId;
-            let pool = (mId < 100) ? mathQ[mId] : engQ[mId];
-            let qData = {};
+            if (gameState.isReview) {
+                exitMission();
+                return;
+            }
+            if (gameState.history.length >= MAX_QUESTIONS) {
+                exitMission();
+                return;
+            }
             
-            if (pool && pool.length > 0) {
-                const randIndex = Math.floor(Math.random() * pool.length);
-                qData = {...pool[randIndex]};
-            } else {
-                if (mId === 1) qData = {q: "בנה שבר: 1/2 (ברירת מחדל)", n:1, d:2, type:"M_ID", theme: "stone"};
-                else qData = {q: "Ender Dragon... (שגיאה)", type:"E_READ", ans:"x"};
+            // Queue safe pop
+            if (gameState.questionQueue.length === 0) {
+                 // Should not happen with new logic, but safe fallback: exit
+                 exitMission();
+                 return;
             }
 
+            const qData = gameState.questionQueue.pop();
             gameState.history.push({ data: qData, solved: false, tries: 0 });
             gameState.historyIndex = gameState.history.length - 1;
             renderQ();
@@ -705,22 +1378,24 @@
         function renderQ() {
             const q = gameState.history[gameState.historyIndex].data;
             const box = document.getElementById('game-content');
-            document.getElementById('question-text').textContent = q.q;
+            document.getElementById('question-text').innerHTML = formatQuestionText(q.q);
             box.innerHTML = '';
             document.getElementById('check-btn').style.display = 'inline-block';
 
             if(q.type === 'M_ID' || q.type === 'M_WORD') {
                 box.innerHTML = `
-                    <div class="mc-slot flex flex-col items-center bg-gray-800 p-4 border-4 border-gray-600">
-                        <label class="text-xs text-gray-400 mb-1">מספר הפריטים</label>
-                        <input id="in-n" type="number" class="mc-input w-24 mb-2" placeholder="מונה">
-                        <div class="fraction-divider w-24 h-1 bg-white"></div>
-                        <input id="in-d" type="number" class="mc-input w-24 mt-2" placeholder="מכנה" value="${q.type === 'M_WORD' ? '1' : ''}">
-                        <label class="text-xs text-gray-400 mt-1">סך הכל בשורה</label>
+                    <div class="flex flex-row items-center justify-center gap-8 w-full">
+                         ${q.type === 'M_ID' ? `<div id="visual-container" class="flex flex-col items-center gap-4"></div>` : ''}
+                        <div class="mc-slot flex flex-col items-center bg-gray-800 p-4 border-4 border-gray-600">
+                            <label class="text-xs text-gray-400 mb-1">החלק (המונה)</label>
+                            <input id="in-n" type="number" class="mc-input w-24 mb-2" placeholder="מונה">
+                            <div class="fraction-divider w-24 h-1 bg-white"></div>
+                            <input id="in-d" type="number" class="mc-input w-24 mt-2" placeholder="מכנה" value="${q.type === 'M_WORD' ? '1' : ''}">
+                            <label class="text-xs text-gray-400 mt-1">השלם (המכנה)</label>
+                        </div>
                     </div>
-                    ${q.type === 'M_ID' ? `<div id="visual-bar" class="grid-bar w-64 mt-4"></div>` : ''}
                 `;
-                if(q.type === 'M_ID') drawBar(q.n, q.d, q.theme || 'grass');
+                if(q.type === 'M_ID') drawVisuals(q.n, q.d, q.theme || 'grass');
             } 
             else if(q.type === 'M_SORT') {
                 box.innerHTML = `
@@ -772,42 +1447,84 @@
             }
         }
 
-        function drawBar(n, d, theme) {
+        function drawVisuals(n, d, theme) {
             setTimeout(() => {
-                const el = document.getElementById('visual-bar');
-                if(!el) return;
-                el.innerHTML = '';
-                if (d > 20) { el.style.display = 'none'; return; } 
-                el.style.display = 'flex';
+                const container = document.getElementById('visual-container');
+                if(!container) return;
+                container.innerHTML = '';
+                if (d > 20) return; 
+
+                // Create the block row container
+                const row = document.createElement('div');
+                row.className = 'block-row';
                 
+                // Determine block texture
+                const blockUrl = THEME_BLOCKS[theme] || THEME_BLOCKS['grass'];
+
                 for(let i=0; i<d; i++) {
-                    const cell = document.createElement('div');
-                    cell.className = 'grid-cell' + (i<n ? ` theme-${theme}` : ' empty-cell');
-                    el.appendChild(cell);
+                    const img = document.createElement('img');
+                    img.src = blockUrl;
+                    img.className = 'mc-block-img';
+                    
+                    if (i >= n) {
+                        // Empty part of the fraction (ghost block)
+                        img.classList.add('mc-block-ghost');
+                    }
+                    row.appendChild(img);
                 }
+                container.appendChild(row);
+
+                // Add pie chart below
+                const pie = document.createElement('div');
+                pie.className = 'pie-chart';
+                const deg = (n / d) * 360;
+                // Simple color mapping fallback
+                const colors = {
+                    grass: "#4A8F28", stone: "#7D7D7D", diamond: "#3C8DAB", 
+                    gold: "#F0A804", iron: "#E6E6E6", tnt: "#DB2E23", 
+                    wood: "#8F6942", emerald: "#17DD62", coal: "#333", cake: "#FFF"
+                };
+                const themeColor = colors[theme] || '#4A8F28';
+                
+                pie.style.background = `conic-gradient(${themeColor} 0deg ${deg}deg, #222 ${deg}deg 360deg)`;
+                pie.style.marginTop = "10px";
+                
+                const sliceDeg = 360 / d;
+                const overlay = document.createElement('div');
+                overlay.style.position = 'absolute';
+                overlay.style.top = '0'; overlay.style.left = '0';
+                overlay.style.width = '100%'; overlay.style.height = '100%';
+                overlay.style.borderRadius = '50%';
+                overlay.style.backgroundImage = `repeating-conic-gradient(transparent 0deg ${sliceDeg - 2}deg, rgba(255,255,255,0.3) ${sliceDeg - 2}deg ${sliceDeg}deg)`;
+                
+                pie.appendChild(overlay);
+                container.appendChild(pie);
             }, 0);
         }
 
         window.checkAnswer = check = (val) => {
             const item = gameState.history[gameState.historyIndex];
             if(item.solved) return;
-            
             const q = item.data;
             let correct = false;
 
             if(q.type === 'M_ID' || q.type === 'M_WORD') {
                 const n = parseInt(document.getElementById('in-n').value);
                 const d = parseInt(document.getElementById('in-d').value);
-                
                 if (q.type === 'M_WORD') {
-                     if (n === q.ansN && d === q.ansD) correct = true;
-                     if (q.ansD === 8 && n === q.ansN && d === 1) correct = true; 
+                      if (n === q.ansN && d === q.ansD) correct = true;
+                      if (q.ansD === 8 && n === q.ansN && d === 1) correct = true; 
                 } else {
                     correct = (n === q.n && d === q.d);
                 }
             } 
             else if (q.type.includes('SORT') || q.type === 'M_CMP' || q.type === 'E_TOBE') {
                 correct = (val === q.ans);
+                if (q.type === 'E_TOBE') {
+                    const qTextEl = document.getElementById('question-text');
+                    const fillClass = correct ? "filled-answer filled-correct" : "filled-answer filled-wrong";
+                    qTextEl.innerHTML = qTextEl.innerHTML.replace('___', `<span class="${fillClass}">${val}</span>`);
+                }
             } 
             else if (q.type === 'E_READ') {
                 const t = document.getElementById('in-text').value.trim().toLowerCase();
@@ -819,18 +1536,155 @@
             
             if(correct) {
                 gameState.score += 10;
+                gameState.missionScore += 10;
                 gameState.diamonds++;
                 item.solved = true;
                 updateUI();
                 fb.innerHTML = "נכון מאוד! 💎";
                 fb.className = "mt-4 p-4 border-2 border-white text-center font-bold text-xl bg-green-700 text-white";
-                document.getElementById('check-btn').disabled = true;
+                document.getElementById('check-btn').style.display = 'none'; 
+                
+                const skipBtn = document.getElementById('skip-btn');
+                skipBtn.textContent = "השאלה הבאה ➡";
+                skipBtn.classList.remove('btn-gold');
+                skipBtn.classList.add('btn-grass');
             } else {
                 item.tries++;
                 fb.innerHTML = "אופס! נסה שוב 🧟";
-                fb.className = "mt-4 p-4 border-2 border-white text-center font-bold text-xl bg-red-800 text-white";
+                fb.className = "mt-4 p-4 border-2 border-white text-center font-bold text-xl bg-orange-600 text-white";
                 if(item.tries === 1) gameState.errors.push(q);
             }
+        };
+
+        function resetFeedback() {
+            document.getElementById('feedback').classList.add('hidden');
+            document.getElementById('check-btn').disabled = false;
+            document.getElementById('check-btn').style.display = 'inline-block';
+            const skipBtn = document.getElementById('skip-btn');
+            skipBtn.textContent = "דלג ⏩";
+            skipBtn.classList.remove('btn-grass');
+            skipBtn.classList.add('btn-gold');
+
+            const curr = gameState.history[gameState.historyIndex];
+            if(curr && curr.solved) {
+                document.getElementById('check-btn').style.display = 'none'; 
+                document.getElementById('feedback').innerHTML = "כבר נפתר!";
+                document.getElementById('feedback').classList.remove('hidden');
+                skipBtn.textContent = "השאלה הבאה ➡";
+                skipBtn.classList.remove('btn-gold');
+                skipBtn.classList.add('btn-grass');
+            }
+        }
+        
+        function updateUI() {
+            document.getElementById('score-display').textContent = gameState.score;
+            document.getElementById('diamonds-display').textContent = gameState.diamonds;
+            const current = gameState.historyIndex + 1;
+            const total = gameState.isReview ? gameState.history.length : MAX_QUESTIONS;
+            document.getElementById('q-num').textContent = `${current} / ${total}`;
+            document.getElementById('mission-title').textContent = gameState.isReview ? "מבחן חוזר ♻️" : "משימה";
+            
+            // Progress Bar Update
+            const pct = Math.min(100, Math.round((current / total) * 100));
+            const bar = document.getElementById('progress-fill');
+            if(bar) bar.style.width = `${pct}%`;
+        }
+
+        // --- THEMATIC QUESTION POOLS ---
+        let mathQ = {
+            1: [
+                {q:"בתיבה יש 5 חפצים. 2 הם {iron}. ייצג את החלק של הברזל כשבר:", n:2, d:5, type:"M_ID", theme: "iron"},
+                {q:"ייצג את החלק של ה-{diamond} מתוך הסך הכל (4):", n:3, d:4, type:"M_ID", theme: "diamond"},
+                {q:"חצי מהבלוקים הם {wood}. ייצג את השבר:", n:1, d:2, type:"M_ID", theme: "wood"},
+                {q:"אספת 3 מתוך 7 מטילי {gold}. כתוב את השבר המתאים:", n:3, d:7, type:"M_ID", theme: "gold"},
+                {q:"המונה (החלק) הוא 3 {emerald}, המכנה (השלם) הוא 4. מהו השבר?", n:3, d:4, type:"M_ID", theme: "emerald"},
+                {q:"ייצג את החלק של ה-{tnt} (מתוך 8 בלוקים בסך הכל):", n:3, d:8, type:"M_ID", theme: "tnt"},
+                // New Icon Questions
+                {q:"יש לך 6 כיכרות {bread}. אכלת 4. מהו השבר?", n:4, d:6, type:"M_ID", theme: "bread"},
+                {q:"המונה הוא 2 {bucket_water}, המכנה הוא 3. מה השבר?", n:2, d:3, type:"M_ID", theme: "bucket_water"},
+                {q:"אספת 5 {cookie} מתוך 8. כתוב את השבר:", n:5, d:8, type:"M_ID", theme: "cookie"},
+                {q:"דגת 10 דגים ({fish}). 3 ברחו. איזה חלק נשאר?", n:7, d:10, type:"M_ID", theme: "fish"},
+                {q:"בשביל עוגה צריך 3 {bucket_milk}. יש לך 1. איזה חלק יש לך?", n:1, d:3, type:"M_ID", theme: "bucket_milk"},
+                {q:"בישלת 4 {cooked_porkchop} מתוך 5. מה השבר?", n:4, d:5, type:"M_ID", theme: "cooked_porkchop"},
+                // New Tools Math
+                {q:"למעדר {hoe} יש 50 שימושים. השתמשת ב-1/5. כמה שימושים נותרו?", n:40, d:1, type:"M_WORD", theme: "hoe"},
+                {q:"בתיבה יש 4 כלים. 1 מהם הוא {pickaxe}. מה החלק שלו?", n:1, d:4, type:"M_ID", theme: "pickaxe"},
+                {q:"כמה זה חצי מ-10 {clock}?", n:5, d:1, type:"M_WORD", theme: "clock"}
+            ],
+            2: [
+                {q: "האם 5/2 ({diamond}) הוא שבר גדול מ-1?", ans: "improper", n:5, d:2, type:"M_SORT"},
+                {q: "האם 10/12 (חיים) הוא שבר קטן מ-1?", ans: "proper", n:10, d:12, type:"M_SORT"},
+                {q: "האם 7/7 (שריון מלא) נחשב גדול/שווה ל-1?", ans: "improper", n:7, d:7, type:"M_SORT"},
+                {q: "מיין: 4/3 דליים של לבה ({bucket_lava})", ans: "improper", n:4, d:3, type:"M_SORT", theme: "bucket_lava"},
+                {q: "מיין: 1/4 מפה", ans: "proper", n:1, d:4, type:"M_SORT"},
+                {q: "האם 8/5 {porkchop} זה יותר מ-1?", ans: "improper", n:8, d:5, type:"M_SORT", theme: "porkchop"}
+            ],
+            3: [
+                {q: "חיבור: 2/9 {emerald} + 5/9 {emerald} + ? = 10/9 {emerald}", n:3, d:9, type:"M_ID", theme: "emerald"}, 
+                {q: "בישול: 3/5 {coal} + 4/5 {coal} = ?", n:7, d:5, type:"M_ID", theme: "coal"},
+                {q: "סטיב אכל 2/8 מה-{cake}, אלכס אכלה 1/8. כמה אכלו יחד?", n:3, d:8, type:"M_ID", theme: "cake"},
+                {q: "Crafting: 2/6 {redstone} + 3/6 {redstone} = ?", n:5, d:6, type:"M_ID", theme: "redstone"}
+            ],
+            4: [
+                {q: "מה שווה יותר? 1/7 {diamond} מול 1/5 {diamond}", n1:1, d1:7, n2:1, d2:5, ans:"<", type:"M_CMP"},
+                {q: "מי חזק יותר? 4/3 {iron} מול 3/4 {iron}", n1:4, d1:3, n2:3, d2:4, ans:">", type:"M_CMP"},
+                {q: "השווה מלאי: 3/4 מול 3/5", n1:3, d1:4, n2:3, d2:5, ans:">", type:"M_CMP"},
+                {q: "השווה: 2/7 מול 4/9", n1:2, d1:7, n2:4, d2:9, ans:"<", type:"M_CMP"},
+                {q: "האם 2/6 {gold} שווה ל-1/3 {gold}?", n1:2, d1:6, n2:1, d2:3, ans:"=", type:"M_CMP"}
+            ],
+            5: [
+                {q: "בספרייה יש 3 מדפים. באמצעי 12 ספרים. בעליון 2/3 מהאמצעי. כמה ספרים בעליון?", ansN:8, ansD:1, type:"M_WORD"},
+                {q: "בתיבה 20 בלוקים. 3/10 הם {emerald}. כמה אמרלדים יש?", ansN:6, ansD:1, type:"M_WORD"},
+                {q: "בתיבה 20 בלוקים. 3/10 הם {wood} והשאר {stone}. כמה אבנים יש?", ansN:14, ansD:1, type:"M_WORD"},
+                {q: "{cake} מחולקת ל-8. סטיב אכל 2, אלכס אכלה 1. כמה פרוסות נשארו?", ansN:5, ansD:1, type:"M_WORD"},
+                {q: "יש לך 9 {carrot}. נתת 1/3 לחזיר. כמה גזרים נתת?", ansN:3, ansD:1, type:"M_WORD", theme: "carrot"},
+                {q: "אלכס מצאה 12 {melon}. היא אכלה 1/4. כמה אכלה?", ansN:3, ansD:1, type:"M_WORD", theme: "melon"}
+            ]
+        };
+
+        let engQ = {
+            101: [
+                {q: "{crafting} Craft (ליצור)", ans: "verb", type:"E_SORT_4"},
+                {q: "Twenty {diamond}s", ans: "number", type:"E_SORT_4"},
+                {q: "May (Month)", ans: "calendar", type:"E_SORT_4"},
+                {q: "Strong ({armor})", ans: "adj", type:"E_SORT_4"},
+                {q: "Thirty {creeper}s", ans: "number", type:"E_SORT_4"},
+                {q: "Tall ({enderman})", ans: "adj", type:"E_SORT_4"},
+                {q: "Climb ({ladder})", ans: "verb", type:"E_SORT_4"},
+                {q: "August", ans: "calendar", type:"E_SORT_4"},
+                {q: "Give ({apple})", ans: "verb", type:"E_SORT_4"},
+                {q: "Fast ({potion})", ans: "adj", type:"E_SORT_4"},
+                // New Icon Vocab
+                {q: "Eat ({bread})", ans: "verb", type:"E_SORT_4"},
+                {q: "Shoot ({bow})", ans: "verb", type:"E_SORT_4"},
+                {q: "Sweet ({cookie})", ans: "adj", type:"E_SORT_4"},
+                {q: "Hot ({bucket_lava})", ans: "adj", type:"E_SORT_4"},
+                {q: "Twelve {arrow}s", ans: "number", type:"E_SORT_4"},
+                {q: "Catch a {fish}", ans: "verb", type:"E_SORT_4"},
+                {q: "Drink {bucket_milk}", ans: "verb", type:"E_SORT_4"},
+                {q: "Tasty {cooked_porkchop}", ans: "adj", type:"E_SORT_4"},
+                // New Tools Vocab
+                {q: "Use a {pickaxe} to mine", ans: "verb", type:"E_SORT_4"},
+                {q: "Dig with a {shovel}", ans: "verb", type:"E_SORT_4"},
+                {q: "Find north with a {compass}", ans: "verb", type:"E_SORT_4"},
+                {q: "Check time on the {clock}", ans: "verb", type:"E_SORT_4"},
+                {q: "Farm with a {hoe}", ans: "verb", type:"E_SORT_4"}
+            ],
+            102: [
+                {q: "Steve ___ mining now.", ans: "is", type:"E_TOBE"},
+                {q: "I ___ a builder.", ans: "am", type:"E_TOBE"},
+                {q: "They ___ playing on the server.", ans: "are", type:"E_TOBE"},
+                {q: "You ___ a griefer!", ans: "are", type:"E_TOBE"},
+                {q: "The {zombie} ___ in the cave.", ans: "is", type:"E_TOBE"},
+                {q: "She ___ crafting a {sword}.", ans: "is", type:"E_TOBE"}
+            ],
+            103: [
+                {q: "How old is Steve? (Text says 10)", ans: "10", type:"E_READ"},
+                {q: "Steve's birthday is in which month? (June)", ans: "june", type:"E_READ"},
+                {q: "What is Steve's hobby? (Building)", ans: "building", type:"E_READ"},
+                {q: "Who is Steve's best friend? (Alex)", ans: "alex", type:"E_READ"},
+                {q: "Alex likes to play ___.", ans: "spleef", type:"E_READ"} 
+            ]
         };
     </script>
 </body>
