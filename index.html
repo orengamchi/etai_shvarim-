@@ -2,7 +2,7 @@
 <html lang="he" dir="rtl">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>אתגר המהנדס: שברים ומילים ⛏️</title>
     
     <script src="https://cdn.tailwindcss.com"></script>
@@ -11,6 +11,10 @@
         @font-face {
             font-family: 'Minecraft';
             src: url('https://raw.githubusercontent.com/TiagoVignatti/Minecraft-Font/master/minecraft_font.ttf') format('truetype');
+        }
+        @font-face {
+            font-family: 'Impact';
+            src: local('Impact'), local('Impact-Regular'), url(https://fonts.gstatic.com/l/font?kit=__impact_kit_placeholder__); /* Fallback if needed */
         }
 
         /* --- Global Reset & Body --- */
@@ -30,6 +34,9 @@
             image-rendering: pixelated;
             background-color: #87CEEB; 
             transition: background-color 5s ease;
+            /* Mobile Tweaks */
+            -webkit-tap-highlight-color: transparent;
+            touch-action: manipulation;
         }
 
         /* --- 3D WORLD BACKGROUND & ENVIRONMENT --- */
@@ -54,28 +61,31 @@
         /* Celestial Bodies */
         .sun {
             position: absolute;
-            top: 10%; left: 10%; width: 80px; height: 80px;
+            top: 10%; left: 10%; width: 60px; height: 60px; /* Smaller on mobile base */
             background-color: #FFF500;
             box-shadow: 4px 4px 0 rgba(0,0,0,0.1);
             z-index: 1;
             transition: top 5s ease, left 5s ease, opacity 2s ease;
         }
+        @media (min-width: 768px) { .sun { width: 80px; height: 80px; } }
         
         .moon {
             position: absolute;
-            top: 110%; left: 80%; width: 60px; height: 60px;
+            top: 110%; left: 80%; width: 50px; height: 50px;
             background-color: #F4F6F0;
             box-shadow: 0 0 10px rgba(255,255,255,0.5);
             z-index: 1;
             transition: top 5s ease, opacity 2s ease;
         }
+        @media (min-width: 768px) { .moon { width: 60px; height: 60px; } }
+        
         .moon::after {
-            content: ''; position: absolute; top: 10px; left: 10px; width: 10px; height: 10px; background: #DDD; opacity: 0.5;
+            content: ''; position: absolute; top: 8px; left: 8px; width: 8px; height: 8px; background: #DDD; opacity: 0.5;
         }
 
         .star {
             position: absolute;
-            width: 4px; height: 4px;
+            width: 3px; height: 3px;
             background: white;
             opacity: 0;
             transition: opacity 3s ease;
@@ -101,30 +111,30 @@
         .cloud {
             position: absolute;
             background-color: rgba(255,255,255,0.8);
-            width: 120px; height: 40px;
+            width: 100px; height: 30px;
             z-index: 2;
-            box-shadow: 8px 8px 0 rgba(0,0,0,0.05);
+            box-shadow: 6px 6px 0 rgba(0,0,0,0.05);
             animation: moveCloud linear infinite;
             transition: background-color 3s;
         }
         #world-layer.storm .cloud { background-color: #555; box-shadow: 4px 4px 0 #222; }
         
         .cloud::after {
-            content: ''; position: absolute; top: -20px; left: 20px;
-            width: 80px; height: 20px; background-color: inherit;
+            content: ''; position: absolute; top: -15px; left: 15px;
+            width: 70px; height: 15px; background-color: inherit;
         }
 
         .ground-plane {
             position: absolute;
             bottom: -200px;
-            left: -100%; /* Wider to cover screens */
-            width: 300%; /* Increased width */
+            left: -100%;
+            width: 300%;
             height: 100%;
             background-color: #5C9338;
             background-image: 
                 linear-gradient(rgba(0,0,0,0.1) 2px, transparent 2px),
                 linear-gradient(90deg, rgba(0,0,0,0.1) 2px, transparent 2px);
-            background-size: 60px 60px;
+            background-size: 40px 40px; /* Smaller grid on mobile */
             transform: rotateX(60deg) translateZ(-50px);
             transform-origin: 50% 100%;
             z-index: 3;
@@ -132,6 +142,8 @@
             box-shadow: inset 0 100px 100px rgba(135, 206, 235, 0.5);
             transition: box-shadow 5s ease, background-color 5s ease;
         }
+        @media (min-width: 768px) { .ground-plane { background-size: 60px 60px; } }
+
         #world-layer.night .ground-plane { 
             background-color: #2E4B1C; 
             box-shadow: inset 0 100px 100px rgba(0, 0, 50, 0.8);
@@ -153,19 +165,20 @@
         .tower-stack {
             position: absolute;
             display: flex;
-            flex-direction: column-reverse; /* Stack upwards */
+            flex-direction: column-reverse;
             align-items: center;
             transform-origin: center bottom;
             animation: moveTower 10s linear infinite;
         }
         
         .tower-block {
-            width: 50px; height: 50px;
+            width: 30px; height: 30px; /* Smaller on mobile */
             background-image: url('https://static.wikia.nocookie.net/minecraft_gamepedia/images/c/c5/Grass_Block_JE7_BE6.png');
             background-size: cover;
             image-rendering: pixelated;
             box-shadow: 2px 2px 5px rgba(0,0,0,0.3);
         }
+        @media (min-width: 768px) { .tower-block { width: 50px; height: 50px; } }
 
         @keyframes moveTower {
             0% { top: 40%; opacity: 0; transform: scale(0.2); }
@@ -190,28 +203,26 @@
 
         /* --- ENDERMAN ANIMATION (SILHOUETTE) --- */
         .intro-enderman {
-            position: relative; width: 120px; height: 200px;
+            position: relative; width: 80px; height: 130px; /* Smaller start for mobile */
             transform-origin: center bottom;
             opacity: 0; 
-            z-index: 101; /* Above lightning */
+            z-index: 101;
         }
+        @media (min-width: 768px) { .intro-enderman { width: 120px; height: 200px; } }
         
-        /* Silhouette styling: Pure black parts */
         .intro-enderman .ender-head,
         .intro-enderman .ender-body,
         .intro-enderman .ender-arm,
         .intro-enderman .ender-leg {
             background-color: #000 !important;
-            box-shadow: 0 0 5px rgba(0,0,0,0.5); /* Subtle shadow for depth */
+            box-shadow: 0 0 5px rgba(0,0,0,0.5);
         }
 
-        /* Glowing eyes for silhouette */
         .intro-enderman .ender-eye {
             background: #D57DFF !important;
             box-shadow: 0 0 15px #D57DFF, 0 0 5px #FFF !important;
         }
 
-        /* The running animation class */
         .intro-running {
             animation: runToCamera 3s ease-in forwards;
         }
@@ -219,10 +230,16 @@
         @keyframes runToCamera {
             0% { transform: scale(0.2) translateY(50px); opacity: 0; }
             5% { opacity: 1; }
-            100% { transform: scale(12) translateY(80px); opacity: 1; }
+            100% { transform: scale(8) translateY(40px); opacity: 1; } /* Reduced max scale for mobile */
+        }
+        @media (min-width: 768px) {
+            @keyframes runToCamera {
+                0% { transform: scale(0.2) translateY(50px); opacity: 0; }
+                5% { opacity: 1; }
+                100% { transform: scale(12) translateY(80px); opacity: 1; }
+            }
         }
 
-        /* Intense Strobe Lightning */
         @keyframes flashLightning {
             0% { opacity: 0; }
             2% { opacity: 1; }
@@ -260,43 +277,50 @@
 
         /* --- FLASHING 3D TITLE STYLES --- */
         .mega-title {
-            font-size: 8rem; 
+            font-size: 4rem; /* Mobile size */
             line-height: 1;
             text-align: center;
             font-weight: 900; 
             color: #FFD700;
-            font-family: 'Impact', 'Arial Black', sans-serif; /* CHANGED FONT TO IMPACT */
-            letter-spacing: 4px;
-            -webkit-text-stroke: 4px #000;
+            font-family: 'Impact', 'Arial Black', sans-serif;
+            letter-spacing: 2px;
+            -webkit-text-stroke: 2px #000;
             text-shadow: 
                 0 1px 0 #c6a300,
                 0 2px 0 #c6a300,
                 0 3px 0 #c6a300,
-                0 4px 0 #c6a300,
-                0 5px 0 #c6a300, 
-                0 6px 0 #c6a300,
-                0 7px 0 #c6a300,
-                0 8px 0 #c6a300,
-                0 9px 0 #000, 
-                0 10px 0 #000,
-                10px 10px 20px rgba(0,0,0,0.5);
+                0 4px 0 #000,
+                5px 5px 10px rgba(0,0,0,0.5);
             animation: flashColors 0.3s infinite alternate;
             transform: perspective(500px) rotateX(15deg);
+            max-width: 90vw;
+        }
+        @media (min-width: 768px) {
+            .mega-title {
+                font-size: 8rem;
+                letter-spacing: 4px;
+                -webkit-text-stroke: 4px #000;
+                text-shadow: 
+                    0 1px 0 #c6a300, 0 2px 0 #c6a300, 0 3px 0 #c6a300, 0 4px 0 #c6a300, 0 5px 0 #c6a300, 
+                    0 6px 0 #c6a300, 0 7px 0 #c6a300, 0 8px 0 #c6a300, 0 9px 0 #000, 0 10px 0 #000,
+                    10px 10px 20px rgba(0,0,0,0.5);
+            }
         }
 
         @keyframes flashColors {
-            0% { color: #FF0000; text-shadow: 0 8px 0 #8B0000; }
-            25% { color: #00FF00; text-shadow: 0 8px 0 #006400; }
-            50% { color: #0000FF; text-shadow: 0 8px 0 #00008B; }
-            75% { color: #FFFF00; text-shadow: 0 8px 0 #8B8B00; }
-            100% { color: #FF00FF; text-shadow: 0 8px 0 #8B008B; }
+            0% { color: #FF0000; text-shadow: 0 4px 0 #8B0000; }
+            25% { color: #00FF00; text-shadow: 0 4px 0 #006400; }
+            50% { color: #0000FF; text-shadow: 0 4px 0 #00008B; }
+            75% { color: #FFFF00; text-shadow: 0 4px 0 #8B8B00; }
+            100% { color: #FF00FF; text-shadow: 0 4px 0 #8B008B; }
         }
 
         /* --- UI Overlay --- */
         .ui-layer {
             position: relative; z-index: 10; width: 100%; height: 100%;
             display: flex; align-items: center; justify-content: center;
-            padding: 1rem; pointer-events: none;
+            padding: 0.5rem; /* Reduced padding */
+            pointer-events: none;
         }
 
         /* --- GUI Styles --- */
@@ -307,15 +331,19 @@
             box-shadow: inset 4px 4px 0 #FFF, inset -4px -4px 0 #555, 0 20px 50px rgba(0,0,0,0.5);
             padding: 12px;
             color: #3F3F3F; 
-            width: 100%; max-width: 900px; max-height: 90vh;
+            width: 95%; /* Mobile width */
+            max-width: 900px; 
+            max-height: 95vh; /* Max height for mobile */
             overflow-y: auto; position: relative;
+            border-radius: 4px;
         }
 
         .mc-slot {
             background-color: #8B8B8B;
             border-right: 2px solid #FFF; border-bottom: 2px solid #FFF;
             border-left: 2px solid #373737; border-top: 2px solid #373737;
-            padding: 10px; display: flex; align-items: center; justify-content: center;
+            padding: 8px; 
+            display: flex; align-items: center; justify-content: center;
             box-shadow: inset 2px 2px 0 #000;
         }
 
@@ -323,12 +351,17 @@
             border: 2px solid #000;
             box-shadow: inset 2px 2px 0 rgba(255,255,255,0.4), inset -2px -2px 0 rgba(0,0,0,0.4);
             color: #FFF; text-shadow: 2px 2px 0 #000; font-weight: bold;
-            padding: 10px 20px; cursor: pointer; text-align: center;
-            display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+            padding: 12px 16px; /* Larger touch target */
+            cursor: pointer; text-align: center;
+            display: inline-flex; align-items: center; justify-content: center; gap: 6px;
+            font-size: 1rem;
+            touch-action: manipulation; /* Optimize for touch */
+            user-select: none;
         }
         .btn-mc:active { transform: translateY(2px); box-shadow: inset 2px 2px 0 rgba(0,0,0,0.4); }
         .btn-mc:disabled { background-color: #555 !important; color: #888; cursor: not-allowed; filter: grayscale(100%); }
 
+        /* Button Colors */
         .btn-stone { background-color: #757575; color: #FFF; }
         .btn-grass { background-color: #4A8F28; }
         .btn-diamond { background-color: #3C8DAB; }
@@ -340,16 +373,18 @@
 
         .mc-input {
             background-color: #222; color: #FFF; border: 2px solid #555;
-            padding: 8px; font-family: inherit; text-align: center; font-size: 1.5rem;
+            padding: 8px; font-family: inherit; text-align: center; font-size: 16px; /* Prevents iOS zoom */
             box-shadow: inset 2px 2px 0 #000;
         }
         .mc-input:focus { border-color: #FFF; background-color: #000; outline: none; }
 
         .question-box {
-            background-color: #4A4A4A; border: 3px solid #222; padding: 15px;
-            margin-bottom: 20px; color: #FFF; text-align: center; font-size: 1.3rem;
+            background-color: #4A4A4A; border: 3px solid #222; padding: 12px;
+            margin-bottom: 15px; color: #FFF; text-align: center; font-size: 1.1rem;
             text-shadow: 2px 2px 0 #000; box-shadow: inset 0 0 10px #000;
+            width: 100%;
         }
+        @media (min-width: 768px) { .question-box { font-size: 1.3rem; padding: 15px; } }
 
         /* --- VISUAL AIDS (BLOCKS) --- */
         .block-row {
@@ -358,15 +393,18 @@
             padding: 10px;
             border-radius: 4px;
             border: 2px solid rgba(0,0,0,0.5);
-            min-height: 60px;
+            min-height: 50px;
+            flex-wrap: wrap; /* Allow wrap on small screens */
         }
         
         .mc-block-img {
-            width: 48px; height: 48px;
+            width: 32px; height: 32px; /* Mobile size */
             image-rendering: pixelated;
-            filter: drop-shadow(4px 4px 0px rgba(0,0,0,0.5));
+            filter: drop-shadow(2px 2px 0px rgba(0,0,0,0.5));
             transition: transform 0.2s;
         }
+        @media (min-width: 768px) { .mc-block-img { width: 48px; height: 48px; filter: drop-shadow(4px 4px 0px rgba(0,0,0,0.5)); } }
+
         .mc-block-img:hover { transform: translateY(-5px); }
         .mc-block-ghost {
             opacity: 0.3;
@@ -374,13 +412,14 @@
         }
         
         .pie-chart {
-            width: 100px; height: 100px;
+            width: 80px; height: 80px;
             border-radius: 50%;
             border: 4px solid #5C4033; /* Wood border */
             background-color: #222;
             position: relative;
             box-shadow: 2px 2px 5px rgba(0,0,0,0.5);
         }
+        @media (min-width: 768px) { .pie-chart { width: 100px; height: 100px; } }
         
         /* Themes Colors for JS injection */
         :root {
@@ -399,49 +438,46 @@
         /* Fill in Blank Styles */
         .filled-answer {
             display: inline-block;
-            padding: 0 8px;
-            border-bottom-width: 4px;
+            padding: 0 4px;
+            border-bottom-width: 3px;
             font-weight: bold;
             transition: all 0.3s ease;
         }
-        .filled-correct {
-            color: #4ade80; /* green-400 */
-            border-color: #4ade80;
-        }
-        .filled-wrong {
-            color: #fb923c; /* orange-400 */
-            border-color: #fb923c;
-        }
+        .filled-correct { color: #4ade80; border-color: #4ade80; }
+        .filled-wrong { color: #fb923c; border-color: #fb923c; }
 
         /* Enderman Base Styles */
-        .enderman-scene { position: relative; width: 120px; height: 200px; margin: 0 auto 20px; }
-        .ender-head { width: 40px; height: 35px; background: #000; position: absolute; top: 0; left: 40px; z-index: 10; animation: floatHead 4s ease-in-out infinite; }
-        .ender-eye { width: 10px; height: 4px; background: #D57DFF; position: absolute; top: 18px; box-shadow: 0 0 5px #D57DFF; }
-        .eye-l { left: 4px; } .eye-r { right: 4px; }
-        .ender-body { width: 26px; height: 70px; background: #000; position: absolute; top: 35px; left: 47px; z-index: 5; }
-        .ender-arm { width: 6px; height: 110px; background: #000; position: absolute; top: 38px; transform-origin: top center; }
-        .arm-l { left: 38px; transform: rotate(3deg); animation: swayArm 3s infinite alternate; }
-        .arm-r { right: 38px; transform: rotate(-3deg); animation: swayArm 3s infinite alternate-reverse; }
-        .ender-leg { width: 6px; height: 100px; background: #000; position: absolute; top: 100px; }
-        .leg-l { left: 48px; } .leg-r { right: 48px; }
-        .particle { width: 6px; height: 6px; background: #D57DFF; position: absolute; opacity: 0; animation: portal 2s infinite; }
+        .enderman-scene { position: relative; width: 80px; height: 130px; margin: 0 auto 10px; }
+        @media (min-width: 768px) { .enderman-scene { width: 120px; height: 200px; margin: 0 auto 20px; } }
+
+        .ender-head { width: 33%; height: 17.5%; background: #000; position: absolute; top: 0; left: 33%; z-index: 10; animation: floatHead 4s ease-in-out infinite; }
+        .ender-eye { width: 25%; height: 11%; background: #D57DFF; position: absolute; top: 50%; box-shadow: 0 0 5px #D57DFF; }
+        .eye-l { left: 10%; } .eye-r { right: 10%; }
+        .ender-body { width: 21%; height: 35%; background: #000; position: absolute; top: 17.5%; left: 39%; z-index: 5; }
+        .ender-arm { width: 5%; height: 55%; background: #000; position: absolute; top: 19%; transform-origin: top center; }
+        .arm-l { left: 31%; transform: rotate(3deg); animation: swayArm 3s infinite alternate; }
+        .arm-r { right: 31%; transform: rotate(-3deg); animation: swayArm 3s infinite alternate-reverse; }
+        .ender-leg { width: 5%; height: 50%; background: #000; position: absolute; top: 50%; }
+        .leg-l { left: 40%; } .leg-r { right: 40%; }
+        .particle { width: 4px; height: 4px; background: #D57DFF; position: absolute; opacity: 0; animation: portal 2s infinite; }
         
         @keyframes floatHead { 0%,100%{top:0;} 50%{top:-3px;} }
         @keyframes swayArm { 0%{transform:rotate(3deg);} 100%{transform:rotate(-3deg);} }
         @keyframes portal { 0% {transform:translate(0,0) scale(1); opacity:1;} 100% {transform:translate(var(--tx), var(--ty)) scale(0); opacity:0;} }
 
         .hidden { display: none !important; }
-        .fraction-divider { height: 4px; background: #FFF; margin: 5px 0; box-shadow: 1px 1px 0 #000; }
+        .fraction-divider { height: 3px; background: #FFF; margin: 4px 0; box-shadow: 1px 1px 0 #000; }
 
         /* Icon Integration in Text */
         .inline-icon {
             display: inline-block;
             vertical-align: middle;
-            width: 32px;
-            height: 32px;
-            margin: 0 4px;
+            width: 24px;
+            height: 24px;
+            margin: 0 2px;
             filter: drop-shadow(2px 2px 0 rgba(0,0,0,0.5));
         }
+        @media (min-width: 768px) { .inline-icon { width: 32px; height: 32px; margin: 0 4px; } }
 
         /* Error Log Table Styles */
         .log-table {
@@ -452,11 +488,13 @@
         .log-table th {
             background-color: #2d2d2d;
             border-bottom: 2px solid #555;
-            padding: 8px;
+            padding: 6px;
+            font-size: 0.9rem;
         }
         .log-table td {
-            padding: 8px;
+            padding: 6px;
             border-bottom: 1px solid #444;
+            font-size: 0.9rem;
         }
         .log-table tr:nth-child(even) {
             background-color: rgba(255, 255, 255, 0.05);
@@ -498,9 +536,9 @@
 
     <!-- CINEMATIC INTRO OVERLAY -->
     <div id="cinematic-overlay" class="z-[100]">
-        <div id="start-btn-container" class="absolute z-50 text-center">
-            <h1 class="text-6xl text-white mb-8 font-bold" style="text-shadow: 4px 4px #AA0000;">⚠️ אזהרה</h1>
-            <button onclick="playIntro()" class="btn-mc btn-obsidian text-3xl p-8 border-purple-500 animate-pulse">
+        <div id="start-btn-container" class="absolute z-50 text-center w-full px-4">
+            <h1 class="text-4xl md:text-6xl text-white mb-6 font-bold" style="text-shadow: 4px 4px #AA0000;">⚠️ אזהרה</h1>
+            <button onclick="playIntro()" class="btn-mc btn-obsidian text-xl md:text-3xl p-6 md:p-8 border-purple-500 animate-pulse w-full max-w-md">
                 לחץ להפעלת המערכת
             </button>
         </div>
@@ -518,7 +556,7 @@
         </div>
 
         <!-- INTRO PART 2: Title -->
-        <div id="intro-title" class="hidden w-full h-full relative flex items-center justify-center">
+        <div id="intro-title" class="hidden w-full h-full relative flex items-center justify-center p-4">
             <div class="mega-title">
                 שיעורי<br>בית
             </div>
@@ -550,20 +588,27 @@
         <div class="mc-gui-container hidden" id="main-interface">
             
             <!-- Top Bar -->
-            <div class="flex flex-wrap justify-between items-center mb-4 border-b-2 border-gray-500 pb-2 gap-2">
-                <div class="flex gap-2">
-                    <button onclick="showHome()" class="btn-mc btn-redstone" title="חזרה למסך הראשי">🏠 בית</button>
-                    <button onclick="showAdminPanel()" class="btn-mc btn-command text-black" title="העלאת שאלות">🖥️ Uploader</button>
-                    <button id="music-btn" onclick="toggleMusic()" class="btn-mc btn-stone">🎵 נגן</button>
+            <div class="flex flex-col md:flex-row justify-between items-center mb-2 md:mb-4 border-b-2 border-gray-500 pb-2 gap-2">
+                
+                <!-- Control Buttons -->
+                <div class="flex flex-wrap justify-center gap-2 w-full md:w-auto">
+                    <button onclick="showHome()" class="btn-mc btn-redstone text-sm flex-1 md:flex-none" title="חזרה למסך הראשי">🏠</button>
+                    <button onclick="showAdminPanel()" class="btn-mc btn-command text-black text-sm flex-1 md:flex-none" title="העלאת שאלות">🖥️</button>
+                    <button id="music-btn" onclick="toggleMusic()" class="btn-mc btn-stone text-sm flex-1 md:flex-none">🎵</button>
+                    <button onclick="showContextualHelp()" class="btn-mc btn-obsidian text-purple-300 border-purple-500 p-2 flex-1 md:flex-none" title="ספר המכשף (עזרה)">
+                        <img src="https://static.wikia.nocookie.net/minecraft_gamepedia/images/7/7b/Book_JE2_BE2.png" width="20" height="20">
+                    </button>
                 </div>
                 
-                <div class="flex gap-4 bg-gray-800 px-4 py-2 border-2 border-white rounded text-white shadow-lg">
-                    <span class="border-l border-white pl-4 ml-2">⭐ ציון כללי: <span id="score-display" class="text-yellow-400 font-bold text-xl">0</span></span>
-                    <span>💎 יהלומים: <span id="diamonds-display" class="text-cyan-400 font-bold text-xl">0</span></span>
+                <!-- Score Display -->
+                <div class="flex gap-4 bg-gray-800 px-3 py-1 border-2 border-white rounded text-white shadow-lg text-sm md:text-base w-full md:w-auto justify-center">
+                    <span class="border-l border-white pl-3 ml-1">⭐ <span id="score-display" class="text-yellow-400 font-bold">0</span></span>
+                    <span>💎 <span id="diamonds-display" class="text-cyan-400 font-bold">0</span></span>
                 </div>
                 
-                <div>
-                      <select id="difficulty-select" class="mc-input text-sm p-1" onchange="changeDifficulty()">
+                <!-- Difficulty -->
+                <div class="w-full md:w-auto text-center">
+                      <select id="difficulty-select" class="mc-input text-sm p-1 w-full md:w-auto" onchange="changeDifficulty()">
                         <option value="easy">🌲 קל</option>
                         <option value="medium" selected>⛏️ בינוני</option>
                         <option value="hard">🗡️ קשה</option>
@@ -574,7 +619,7 @@
             <!-- VIEWS -->
 
             <!-- 0. Intro View (Menu) -->
-            <div id="intro-view" class="view flex flex-col items-center justify-center py-10">
+            <div id="intro-view" class="view flex flex-col items-center justify-center py-4 md:py-10 text-center h-full overflow-y-auto">
                 <div class="enderman-scene">
                     <div class="ender-head"><div class="ender-eye eye-l"></div><div class="ender-eye eye-r"></div></div>
                     <div class="ender-body"></div>
@@ -584,120 +629,116 @@
                     <div class="particle" style="top:30%; right:20%; --tx: 20px; --ty: -30px; animation-delay: 0.5s;"></div>
                 </div>
 
-                <h1 class="text-4xl font-bold mb-8 text-purple-800" style="text-shadow: 2px 2px #FFF;">האתגר של האנדרמן</h1>
-                <p class="mb-6 text-gray-700 font-bold">השלם את המשימות כדי לבנות פורטל!</p>
-                <button onclick="startGame()" class="btn-mc btn-grass text-2xl px-12 py-4 shadow-lg">התחל משחק ▶</button>
+                <h1 class="text-3xl md:text-4xl font-bold mb-4 text-purple-800" style="text-shadow: 2px 2px #FFF;">האתגר של האנדרמן</h1>
+                <p class="mb-4 text-gray-700 font-bold text-sm md:text-base px-4">השלם את המשימות כדי לבנות פורטל!</p>
+                <button onclick="startGame()" class="btn-mc btn-grass text-xl md:text-2xl px-8 py-3 shadow-lg w-full max-w-xs">התחל משחק ▶</button>
             </div>
 
             <!-- 1. Subject Menu -->
-            <div id="subject-menu-view" class="view hidden text-center">
-                <h2 class="text-2xl mb-8 text-gray-800">בחר את המכרה שלך:</h2>
-                <div class="flex flex-col sm:flex-row justify-center gap-6">
-                    <button onclick="showView('math-menu-view')" class="btn-mc btn-wood text-xl p-8 w-64 flex flex-col items-center gap-2">
+            <div id="subject-menu-view" class="view hidden text-center h-full overflow-y-auto">
+                <h2 class="text-xl md:text-2xl mb-6 text-gray-800">בחר את המכרה שלך:</h2>
+                <div class="flex flex-col sm:flex-row justify-center gap-4 px-4">
+                    <button onclick="showView('math-menu-view')" class="btn-mc btn-wood text-lg p-6 w-full sm:w-64 flex flex-col items-center gap-2">
                         <span class="text-4xl">🔢</span>
                         <span>עולם השברים</span>
                     </button>
-                    <button onclick="showView('english-menu-view')" class="btn-mc btn-diamond text-xl p-8 w-64 flex flex-col items-center gap-2 text-black" style="text-shadow:none">
+                    <button onclick="showView('english-menu-view')" class="btn-mc btn-diamond text-lg p-6 w-full sm:w-64 flex flex-col items-center gap-2 text-black" style="text-shadow:none">
                         <span class="text-4xl">📜</span>
                         <span>עולם המילים</span>
                     </button>
                 </div>
-                <div class="mt-8">
-                    <button onclick="showTips()" class="btn-mc btn-obsidian text-purple-300 border-purple-500">📖 ספר המכשף (מדריך)</button>
+                <div class="mt-6 pb-4">
+                    <button onclick="showTips()" class="btn-mc btn-obsidian text-purple-300 border-purple-500 w-full max-w-xs">📖 ספר המכשף</button>
                 </div>
             </div>
 
             <!-- 2. Math Menu -->
-            <div id="math-menu-view" class="view hidden">
-                <h2 class="text-2xl mb-4 text-center text-gray-800">משימות כרייה (חשבון):</h2>
-                <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                    <button onclick="startMission(1)" class="btn-mc btn-stone text-lg text-right px-4">1. 🌲 מלאי התיבה (זיהוי)</button>
-                    <button onclick="startMission(2)" class="btn-mc btn-stone text-lg text-right px-4">2. 🗿 מיון בלוקים (סוגים)</button>
-                    <button onclick="startMission(3)" class="btn-mc btn-stone text-lg text-right px-4">3. 🧱 שולחן היצירה (חיבור)</button>
-                    <button onclick="startMission(4)" class="btn-mc btn-stone text-lg text-right px-4">4. ⚖️ מאזני הכוח (השוואה)</button>
-                    <button onclick="startMission(5)" class="btn-mc btn-gold text-lg text-right px-4">5. 🍲 הכפר והמשק (מילוליות)</button>
+            <div id="math-menu-view" class="view hidden h-full overflow-y-auto pb-4">
+                <h2 class="text-xl md:text-2xl mb-4 text-center text-gray-800">משימות כרייה (חשבון):</h2>
+                <div class="grid grid-cols-1 gap-3 px-2">
+                    <button onclick="startMission(1)" class="btn-mc btn-stone text-base text-right px-4 py-3">1. 🌲 מלאי התיבה (זיהוי)</button>
+                    <button onclick="startMission(2)" class="btn-mc btn-stone text-base text-right px-4 py-3">2. 🗿 מיון בלוקים (סוגים)</button>
+                    <button onclick="startMission(3)" class="btn-mc btn-stone text-base text-right px-4 py-3">3. 🧱 שולחן היצירה (חיבור)</button>
+                    <button onclick="startMission(4)" class="btn-mc btn-stone text-base text-right px-4 py-3">4. ⚖️ מאזני הכוח (השוואה)</button>
+                    <button onclick="startMission(5)" class="btn-mc btn-gold text-base text-right px-4 py-3">5. 🍲 הכפר והמשק (מילוליות)</button>
                 </div>
             </div>
 
             <!-- 3. English Menu -->
-            <div id="english-menu-view" class="view hidden">
-                <h2 class="text-2xl mb-4 text-center text-gray-800">משימות שפה (אנגלית):</h2>
-                <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                    <button onclick="startMission(101)" class="btn-mc btn-stone text-lg text-right px-4">E1. 🏷️ Inventory Sort (Vocab)</button>
-                    <button onclick="startMission(102)" class="btn-mc btn-stone text-lg text-right px-4">E2. ✅ Steve's Actions (To Be)</button>
-                    <button onclick="startMission(103)" class="btn-mc btn-stone text-lg text-right px-4">E3. 🧭 Steve's Journal (Reading)</button>
+            <div id="english-menu-view" class="view hidden h-full overflow-y-auto pb-4">
+                <h2 class="text-xl md:text-2xl mb-4 text-center text-gray-800">משימות שפה (אנגלית):</h2>
+                <div class="grid grid-cols-1 gap-3 px-2">
+                    <button onclick="startMission(101)" class="btn-mc btn-stone text-base text-right px-4 py-3">E1. 🏷️ Inventory Sort (Vocab)</button>
+                    <button onclick="startMission(102)" class="btn-mc btn-stone text-base text-right px-4 py-3">E2. ✅ Steve's Actions (To Be)</button>
+                    <button onclick="startMission(103)" class="btn-mc btn-stone text-base text-right px-4 py-3">E3. 🧭 Steve's Journal (Reading)</button>
                 </div>
             </div>
 
             <!-- 4. Game Arena -->
-            <div id="game-view" class="view hidden">
-                <div class="flex justify-between items-center mb-4">
-                    <h3 id="mission-title" class="text-xl font-bold text-gray-700">משימה</h3>
+            <div id="game-view" class="view hidden h-full flex flex-col">
+                <div class="flex justify-between items-center mb-2">
+                    <h3 id="mission-title" class="text-lg font-bold text-gray-700">משימה</h3>
                     <div class="flex gap-2 items-center">
-                        <button onclick="showContextualHelp()" class="btn-mc btn-obsidian text-sm p-2 border-purple-500" title="רמז">
-                            <img src="https://static.wikia.nocookie.net/minecraft_gamepedia/images/7/7b/Book_JE2_BE2.png" width="20" height="20">
-                        </button>
-                        <span class="text-gray-600 font-bold">שאלה <span id="q-num">1</span></span>
+                        <span class="text-gray-600 font-bold text-sm">שאלה <span id="q-num">1</span></span>
                     </div>
                 </div>
 
                 <!-- Progress Bar -->
-                <div class="w-full mb-6">
-                    <div class="w-full h-6 bg-gray-900 border-2 border-black relative overflow-hidden">
+                <div class="w-full mb-4 flex-shrink-0">
+                    <div class="w-full h-4 bg-gray-900 border-2 border-black relative overflow-hidden">
                         <div id="progress-fill" class="h-full bg-green-500 transition-all duration-500 ease-out" style="width: 0%; box-shadow: inset 0 -2px 0 rgba(0,0,0,0.3);"></div>
                     </div>
                 </div>
 
-                <div class="question-box">
-                    <p id="question-text">השאלה תופיע כאן...</p>
+                <div class="question-box flex-shrink-0">
+                    <p id="question-text" class="leading-tight">השאלה תופיע כאן...</p>
                 </div>
 
-                <div id="game-content" class="mb-6 min-h-[150px] flex flex-col items-center justify-center gap-4">
+                <div id="game-content" class="flex-grow flex flex-col items-center justify-center gap-4 overflow-y-auto py-2 w-full">
                     <!-- Dynamic Content -->
                 </div>
 
-                <div class="flex justify-center gap-4 flex-wrap mt-4">
-                    <button onclick="prevQ()" class="btn-mc btn-stone">⬅️ הקודם</button>
-                    <button onclick="checkAnswer()" id="check-btn" class="btn-mc btn-grass text-xl px-8">בדוק! ⛏️</button>
-                    <button onclick="skipQ()" id="skip-btn" class="btn-mc btn-gold">דלג ⏩</button>
+                <div class="flex justify-center gap-2 flex-wrap mt-2 flex-shrink-0 pb-2">
+                    <button onclick="prevQ()" class="btn-mc btn-stone flex-1 min-w-[80px] text-sm">⬅️</button>
+                    <button onclick="checkAnswer()" id="check-btn" class="btn-mc btn-grass text-lg px-4 flex-[2]">בדוק! ⛏️</button>
+                    <button onclick="skipQ()" id="skip-btn" class="btn-mc btn-gold flex-1 min-w-[80px] text-sm">דלג ⏩</button>
                 </div>
 
-                <div id="feedback" class="hidden mt-4 p-4 border-2 border-white text-center font-bold text-xl" style="background:#333;"></div>
+                <div id="feedback" class="hidden mt-2 p-3 border-2 border-white text-center font-bold text-lg flex-shrink-0" style="background:#333;"></div>
             </div>
 
             <!-- 5. Summary -->
-            <div id="summary-view" class="view hidden text-center p-8">
-                <h2 class="text-4xl mb-6 text-green-600" style="text-shadow: 2px 2px #FFF">סיום כרייה!</h2>
-                <div class="bg-gray-300 border-4 border-black p-6 mb-6 inline-block min-w-[300px]">
-                    <div class="text-4xl mb-4 font-bold text-blue-800">ציון משימה: <span id="final-grade">100%</span></div>
-                    <div class="text-xl text-black border-t border-gray-500 pt-2">
-                        <p>סה"כ ניקוד כללי: <span id="final-score">0</span></p>
-                        <p>סה"כ יהלומים: <span id="final-diamonds">0</span> 💎</p>
+            <div id="summary-view" class="view hidden text-center p-4 h-full overflow-y-auto">
+                <h2 class="text-3xl mb-4 text-green-600" style="text-shadow: 2px 2px #FFF">סיום כרייה!</h2>
+                <div class="bg-gray-300 border-4 border-black p-4 mb-4 inline-block w-full max-w-md">
+                    <div class="text-3xl mb-2 font-bold text-blue-800">ציון: <span id="final-grade">100%</span></div>
+                    <div class="text-lg text-black border-t border-gray-500 pt-2 flex justify-around">
+                        <p>ניקוד: <span id="final-score">0</span></p>
+                        <p>יהלומים: <span id="final-diamonds">0</span> 💎</p>
                     </div>
                 </div>
                 
-                <!-- Direct Next Mission Button -->
-                <div id="next-level-container" class="hidden mb-6">
-                    <button onclick="goToNextMission()" class="btn-mc btn-grass w-full py-4 text-2xl shadow-xl animate-bounce">
+                <div id="next-level-container" class="hidden mb-4">
+                    <button onclick="goToNextMission()" class="btn-mc btn-grass w-full py-3 text-xl shadow-xl animate-bounce">
                         המשימה הבאה ⏭️
                     </button>
                 </div>
 
-                <div id="retake-section" class="hidden mb-6">
-                    <p class="text-red-600 font-bold mb-2 text-xl">נמצאו פריטים פגומים (טעויות)!</p>
-                    <button onclick="startReview()" class="btn-mc btn-obsidian text-purple-300 border-purple-500 w-full py-4 text-xl animate-pulse">
-                        ♻️ מבחן חוזר (תקן טעויות)
+                <div id="retake-section" class="hidden mb-4">
+                    <p class="text-red-600 font-bold mb-2 text-lg">נמצאו פריטים פגומים!</p>
+                    <button onclick="startReview()" class="btn-mc btn-obsidian text-purple-300 border-purple-500 w-full py-3 text-lg animate-pulse">
+                        ♻️ מבחן חוזר
                     </button>
                 </div>
 
-                <div class="text-right mb-6">
-                    <h3 class="text-xl mb-2 text-gray-700">יומן חפירות (טעויות):</h3>
-                    <div class="bg-gray-800 border-2 border-white p-2 h-48 overflow-y-auto">
+                <div class="text-right mb-4">
+                    <h3 class="text-lg mb-2 text-gray-700">יומן חפירות:</h3>
+                    <div class="bg-gray-800 border-2 border-white p-2 h-40 overflow-y-auto">
                         <table class="log-table text-sm text-white">
-                            <thead><tr class="border-b border-gray-600"><th>שאלה</th><th>תשובה נכונה</th></tr></thead>
+                            <thead><tr class="border-b border-gray-600"><th>שאלה</th><th>תשובה</th></tr></thead>
                             <tbody id="error-log-body"></tbody>
                         </table>
-                        <p id="no-errors-text" class="hidden text-center text-green-400 mt-4 font-bold text-lg">עבודה מושלמת! אין תקלות במכרה.</p>
+                        <p id="no-errors-text" class="hidden text-center text-green-400 mt-4 font-bold text-lg">עבודה מושלמת!</p>
                     </div>
                 </div>
                 
@@ -708,13 +749,13 @@
     </div>
 
     <!-- Tips Modal (Spellbook) -->
-    <div id="tips-modal" class="hidden fixed inset-0 bg-black bg-opacity-90 flex items-center justify-center z-50">
-        <div class="bg-gray-200 border-4 border-black p-6 max-w-2xl w-full relative text-black h-[80vh] overflow-y-auto" style="background: #c6c6c6;">
-            <button onclick="hideTips()" class="absolute top-2 left-2 font-bold text-red-600 text-xl btn-mc btn-stone">X סגור</button>
+    <div id="tips-modal" class="hidden fixed inset-0 bg-black bg-opacity-90 flex items-center justify-center z-50 p-4">
+        <div class="bg-gray-200 border-4 border-black p-4 max-w-lg w-full relative text-black max-h-[90vh] overflow-y-auto rounded" style="background: #c6c6c6;">
+            <button onclick="hideTips()" class="absolute top-2 left-2 font-bold text-red-600 text-lg btn-mc btn-stone px-3 py-1">X</button>
             
-            <div class="text-center mb-6">
-                <h3 class="text-3xl font-bold mb-2" style="color: #3f3f3f; text-shadow: 2px 2px #fff;">📖 ספר המכשף</h3>
-                <p class="text-gray-700 font-bold">מדריך אסטרטגי לפתרון בעיות</p>
+            <div class="text-center mb-4 mt-2">
+                <h3 class="text-2xl font-bold mb-1" style="color: #3f3f3f;">📖 ספר המכשף</h3>
+                <p class="text-gray-700 font-bold text-sm">מדריך אסטרטגי</p>
             </div>
 
             <div id="tips-content">
@@ -724,35 +765,27 @@
     </div>
 
     <!-- Admin / Uploader Modal -->
-    <div id="admin-panel-modal" class="hidden fixed inset-0 bg-black bg-opacity-90 flex items-center justify-center z-50">
-        <div class="bg-orange-200 border-4 border-orange-900 p-6 max-w-2xl w-full relative text-black h-[550px] flex flex-col font-mono" style="background-color: #C77E4F; border-color: #5C3A21;">
+    <div id="admin-panel-modal" class="hidden fixed inset-0 bg-black bg-opacity-90 flex items-center justify-center z-50 p-2">
+        <div class="bg-orange-200 border-4 border-orange-900 p-4 max-w-2xl w-full relative text-black h-[500px] flex flex-col font-mono rounded" style="background-color: #C77E4F; border-color: #5C3A21;">
             <button onclick="hideAdminPanel()" class="absolute top-2 left-2 font-bold text-red-900 text-xl">X</button>
             
-            <div class="flex items-center justify-center gap-3 mb-4">
-                <span class="text-4xl">🖥️</span>
-                <h3 class="text-2xl font-bold text-center text-white drop-shadow-md">Command Block: Uploader</h3>
+            <div class="flex items-center justify-center gap-3 mb-2">
+                <span class="text-2xl">🖥️</span>
+                <h3 class="text-xl font-bold text-center text-white drop-shadow-md">Command Block</h3>
             </div>
             
-            <p class="text-sm text-center mb-4 text-white font-bold bg-black bg-opacity-20 p-2 rounded">
-                הכנס פקודות JSON כדי לטעון שאלות חדשות לעולם.
+            <p class="text-xs text-center mb-2 text-white font-bold bg-black bg-opacity-20 p-1 rounded">
+                הכנס JSON לטעינת שאלות.
             </p>
             
-            <textarea id="json-input" class="flex-grow p-4 font-mono text-sm border-4 border-orange-800 bg-black text-green-400 mb-4 rounded shadow-inner" 
-            placeholder='[
-  { 
-    "missionId": 1, 
-    "q": "שאלה חדשה...", 
-    "n": 1, "d": 2, 
-    "type": "M_ID", 
-    "theme": "diamond" 
-  }
-]'></textarea>
+            <textarea id="json-input" class="flex-grow p-2 font-mono text-xs border-4 border-orange-800 bg-black text-green-400 mb-2 rounded shadow-inner" 
+            placeholder='[{"missionId":1,"q":"...","n":1,"d":2,"type":"M_ID"}]'></textarea>
             
-            <div class="flex gap-4">
-                <button onclick="loadCustomQuestions()" class="btn-mc btn-green flex-1 shadow-lg">Load Data (טען)</button>
-                <button onclick="clearCustomQuestions()" class="btn-mc btn-red flex-1 shadow-lg">Reset World (נקה)</button>
+            <div class="flex gap-2">
+                <button onclick="loadCustomQuestions()" class="btn-mc btn-green flex-1 text-sm shadow-lg">Load</button>
+                <button onclick="clearCustomQuestions()" class="btn-mc btn-red flex-1 text-sm shadow-lg">Reset</button>
             </div>
-            <p id="admin-feedback" class="text-center mt-2 font-bold text-white"></p>
+            <p id="admin-feedback" class="text-center mt-1 font-bold text-white text-xs"></p>
         </div>
     </div>
 
@@ -975,20 +1008,19 @@
         };
 
         function showContextualHelp() {
-            const currentQ = gameState.history[gameState.historyIndex]?.data;
-            const contentDiv = document.getElementById('tips-content');
-            
-            if (!currentQ) {
-                // Default view (all tips) if not in game or error
-                showTips(); 
-                return;
+            // If inside a specific question in game view
+            if (!document.getElementById('game-view').classList.contains('hidden') && gameState.historyIndex >= 0) {
+                const currentQ = gameState.history[gameState.historyIndex]?.data;
+                if (currentQ) {
+                     const hintHTML = HINTS[currentQ.type] || "<p>אין רמז זמין לסוג שאלה זה.</p>";
+                     document.getElementById('tips-content').innerHTML = hintHTML;
+                     document.getElementById('tips-modal').classList.remove('hidden');
+                     return;
+                }
             }
-
-            // Get specific hint based on type
-            const hintHTML = HINTS[currentQ.type] || "<p>אין רמז זמין לסוג שאלה זה.</p>";
             
-            contentDiv.innerHTML = hintHTML;
-            document.getElementById('tips-modal').classList.remove('hidden');
+            // Fallback: Show general tips (the Menu view or generic)
+            showTips(); 
         }
 
         function formatQuestionText(text) {
